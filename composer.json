@@ -1,0 +1,14 @@
+{
+        "autoload": {
+            "psr-4": {
+                "ROOT\\": "src/"
+            }
+        },
+        "require": {
+            "monolog/monolog": "^2.3",
+            "filp/whoops": "^2.14",
+                "illuminate/database": "^8.60"
+        }
+    
+
+}
