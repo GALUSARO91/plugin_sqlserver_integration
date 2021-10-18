@@ -17,11 +17,12 @@ class ClientsController{
 
     function create_client($id){
        
-        // $already_set = is_null($this->clients::where('COD_ID',$_POST['remote-db-user-primary-key'])->get())?$_POST['remote-db-user-primary-key']:;
-        $already_set = $this->clients::where('COD_ID',$_POST['remote-db-user-primary-key'])->get();
+       
+        $already_set = $this->clients::where('COD_ID',$_POST['remote-db-user-primary-key'])->first();
+
         if(isset($_POST['remote-db-user-primary-key']) && $_POST['role'] == 'customer'){
 
-            $client_id = $this->set_random_id($_POST['remote-db-user-primary-key'],$already_set);
+            $client_id = $this->set_random_id($_POST['remote-db-user-primary-key'],!is_null($already_set)?$already_set->COD_ID:'');
             $client_name = $_POST['first_name']." ".$_POST['last_name'];
             $client_balance = 0;    
 
@@ -34,12 +35,13 @@ class ClientsController{
 
 
     }
-// TODO: Test below function
+    //FIXME: Apply do while instead of recursive
     function set_random_id(string $id_given, string $id_in_remote_db){
-        $new_id=null;
+        $new_id=$id_given;
         if($id_given == $id_in_remote_db){
             $new_id = mt_rand(1,99999999);
-            $this->set_random_id($new_id,$this->clients::where('COD_ID',$new_id)->get());
+            $new_id_in_remote_db = $this->clients::where('COD_ID',$new_id)->first();
+            $this->set_random_id($new_id,!is_null($new_id_in_remote_db )?$new_id_in_remote_db->COD_ID:''); 
 
         } else {
             $new_id = $id_given;

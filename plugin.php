@@ -14,6 +14,8 @@
  * Text Domain:       my-basics-plugin
  * Domain Path:       /languages
  */
+
+// Initialize classes and files attached
 if ( ! defined( 'ABSPATH' ) ) exit;
 require __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ .'/src/includes/admin-page-layouts.php';
@@ -26,16 +28,12 @@ use ROOT\sshcontrollers\SSHHandler as SSH;
 use ROOT\controllers\ClientsController;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use ROOT\models\Clients;
-
+//initiallize logger
 $log = new Logger('app');
 $log->pushHandler(new StreamHandler(__DIR__.'/logs/app.log', Logger::DEBUG));
 
-/* $whoops = new \Whoops\Run;
-$whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
-$whoops->register();
- */
+// declare option names
 
-$capsule = null;
 
 $GLOBALS['rm_db_option_names'] = array('ssh_host','ssh_port','ssh_user','ssh_local_port','ssh_remote_host','ssh_remote_port','ssh_connection_string', 'remote_db','db_username','db_password','db_conecction_string');
 
@@ -50,7 +48,7 @@ try{
   // $conn = new PDO("sqlsrv:Server = 127.0.0.1,5000\ADMINISTRADOR;Database = Scm Prueba3", "luisgabriel","GabRod91" );
 
   function start_remote_db(){
-    // FIXME: function triggers an error while login in sql server
+    // FIXME: function triggers an error while login in sql server - function works, bridge needs to be reset first
     global $capsule, $log;
     $capsule = new Capsule;
 
@@ -70,14 +68,15 @@ try{
   $capsule->setAsGlobal();
   
   $capsule->bootEloquent();
-  array_walk($connection_array,function($value, $key) use ($log){
+/*   array_walk($connection_array,function($value, $key) use ($log){
     $log->info("$key has the following value: $value \n");
-  });
+  }); */
 
   }
 
   function start_ssh_and_remote_db($option){
     // global $capsule;
+    // FIXME: Bridge falls often - create and destroy bridge for each transaction
 
     if(in_array($option,$GLOBALS['rm_db_option_names'])){
 
