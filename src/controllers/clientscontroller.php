@@ -35,13 +35,13 @@ class ClientsController{
 
 
     }
-    //FIXME: Apply do while instead of recursive
+    
     function set_random_id(string $id_given, string $id_in_remote_db){
-        $new_id=$id_given;
+        $new_id = null;
         if($id_given == $id_in_remote_db){
             $new_id = mt_rand(1,99999999);
             $new_id_in_remote_db = $this->clients::where('COD_ID',$new_id)->first();
-            $this->set_random_id($new_id,!is_null($new_id_in_remote_db )?$new_id_in_remote_db->COD_ID:''); 
+            return $this->set_random_id($new_id,!is_null($new_id_in_remote_db )?$new_id_in_remote_db->COD_ID:''); 
 
         } else {
             $new_id = $id_given;
@@ -49,5 +49,6 @@ class ClientsController{
         }
 
     }
+
 
 }

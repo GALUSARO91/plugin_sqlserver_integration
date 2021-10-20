@@ -77,6 +77,11 @@ class SSHHandler{
         return $this->pid;
     }
 
+    function ssh_bridge_close(){
+        $pid = $this->pid;
+        `kill $pid > /dev/null 2>&1 & echo $!`;
+    }
+
     function __destruct(){
 
         shell_exec('sudo killall ssh');
