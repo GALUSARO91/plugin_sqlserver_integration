@@ -59,7 +59,7 @@ try{
 
   }
 
-  function start_ssh_and_remote_db(){
+  function start_ssh(){
     $ssh = new SSH(get_option('ssh_host'),get_option('ssh_user'),get_option('ssh_local_port'),get_option('ssh_remote_host'),get_option('ssh_remote_port'),get_option('ssh_connection_string'));    
     $ssh->ssh_bridge();
     return $ssh;
@@ -77,12 +77,13 @@ function remove_all_options(){
 }
 
 function remote_user_creator($id){
-    $ssh = start_ssh_and_remote_db();
+    $ssh = start_ssh();
     start_remote_db();
     $client = new ClientsController(new Clients());
-    $client->create_client($id);
+    $client_id = $client->create_client($id);
+    // remote_db_user_primary_key_update($client_id);
+    update_user_meta($id,'remote-db-user-primary-key',$client_id);
     $ssh->ssh_bridge_close();
-      
 
 };
 
@@ -98,7 +99,7 @@ function remote_user_creator($id){
   add_action('edit_user_profile_update','remote_db_user_primary_key_update');
   add_action('admin_init', 'remote_db_plugin_register_settings');
   add_action( 'admin_menu', 'remote_db_plugin_admin_page' );
-  // add_action('updated_option','start_ssh_and_remote_db', 10, 1);
+  // add_action('updated_option','start_ssh', 10, 1);
   add_action('user_register', 'remote_user_creator',1);
   register_deactivation_hook( __FILE__, 'remove_all_options' );
 
