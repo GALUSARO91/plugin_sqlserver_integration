@@ -3,7 +3,6 @@ namespace ROOT\controllers;
 
 use ROOT\models\Clients;
 
-// TODO: Abstract class for record controllers
 
 class ClientsController{
 
