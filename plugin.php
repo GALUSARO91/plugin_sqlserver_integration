@@ -83,15 +83,23 @@ function remove_all_options(){
 function remote_user_creator($id){
     $ssh = start_ssh();
     start_remote_db();
-    // $client_model = new ClientModel();
-    // $client_model->set_table('CLIENTES');
     $client = new ClientsRecordController(new ClientModel());
     $client_id = $client->createRecord($id);
-    // remote_db_user_primary_key_update($client_id);
     update_user_meta($id,'remote-db-user-primary-key',$client_id);
     $ssh->ssh_bridge_close();
 
 };
+
+function retrieve_user(){
+      $ssh = start_ssh();
+      start_remote_db();
+      $client = new ClientsRecordController(new ClientModel());
+      $id = get_user_meta(get_current_user_id(),'remote-db-user-primary-key');
+      $client_id = $client->retrieveRecord($id);
+      $ssh->ssh_bridge_close();
+      echo "<p> Monto total a pagar: $client_id->SALDO </p>";
+      
+}
 
 // TODO: End CRUD for clients
 // TODO: End CROD for products
@@ -106,6 +114,7 @@ function remote_user_creator($id){
   add_action('admin_init', 'remote_db_plugin_register_settings');
   add_action( 'admin_menu', 'remote_db_plugin_admin_page' );
   add_action('user_register', 'remote_user_creator',1);
+  add_action('woocommerce_account_content','retrieve_user');
   register_deactivation_hook( __FILE__, 'remove_all_options' );
 
 } 
