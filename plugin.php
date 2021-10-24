@@ -25,8 +25,9 @@ use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use ROOT\sshcontrollers\SSHHandler as SSH;
 use Illuminate\Database\Capsule\Manager as Capsule;
-use ROOT\controllers\ClientsRecordControler;
+use ROOT\controllers\ClientsRecordController;
 use ROOT\models\BaseModel;
+use ROOT\models\ClientModel;
 
 // use ROOT\models\Clients;
 //initiallize logger
@@ -39,6 +40,8 @@ $log->pushHandler(new StreamHandler(__DIR__.'/logs/app.log', Logger::DEBUG));
 $GLOBALS['rm_db_option_names'] = array('ssh_host','ssh_port','ssh_user','ssh_local_port','ssh_remote_host','ssh_remote_port','ssh_connection_string', 'remote_db','db_username','db_password','db_conecction_string');
 
 try{
+
+  // Connect to remote database
   function start_remote_db(){
     $capsule = new Capsule;
     $connection_array = array(
@@ -59,7 +62,7 @@ try{
   $capsule->bootEloquent();
 
   }
-
+// Boot SSH bridge
   function start_ssh(){
     $ssh = new SSH(get_option('ssh_host'),get_option('ssh_user'),get_option('ssh_local_port'),get_option('ssh_remote_host'),get_option('ssh_remote_port'),get_option('ssh_connection_string'));    
     $ssh->ssh_bridge();
@@ -80,7 +83,9 @@ function remove_all_options(){
 function remote_user_creator($id){
     $ssh = start_ssh();
     start_remote_db();
-    $client = new ClientsRecordControler(new BaseModel('CLIENTES'));
+    // $client_model = new ClientModel();
+    // $client_model->set_table('CLIENTES');
+    $client = new ClientsRecordController(new ClientModel());
     $client_id = $client->createRecord($id);
     // remote_db_user_primary_key_update($client_id);
     update_user_meta($id,'remote-db-user-primary-key',$client_id);
@@ -100,7 +105,6 @@ function remote_user_creator($id){
   add_action('edit_user_profile_update','remote_db_user_primary_key_update');
   add_action('admin_init', 'remote_db_plugin_register_settings');
   add_action( 'admin_menu', 'remote_db_plugin_admin_page' );
-  // add_action('updated_option','start_ssh', 10, 1);
   add_action('user_register', 'remote_user_creator',1);
   register_deactivation_hook( __FILE__, 'remove_all_options' );
 
