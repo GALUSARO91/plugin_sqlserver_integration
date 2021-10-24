@@ -21,13 +21,11 @@ require __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ .'/src/includes/admin-page-layouts.php';
 require_once __DIR__ .'/src/includes/admin-page-functions.php';
 
-// use PDO;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use ROOT\sshcontrollers\SSHHandler as SSH;
-// use ROOT\controllers\ClientsController;
 use Illuminate\Database\Capsule\Manager as Capsule;
-use ROOT\controllers\RecordsController;
+use ROOT\controllers\ClientsRecordControler;
 use ROOT\models\BaseModel;
 
 // use ROOT\models\Clients;
@@ -82,7 +80,7 @@ function remove_all_options(){
 function remote_user_creator($id){
     $ssh = start_ssh();
     start_remote_db();
-    $client = new RecordsController(new BaseModel('CLIENTES'));
+    $client = new ClientsRecordControler(new BaseModel('CLIENTES'));
     $client_id = $client->createRecord($id);
     // remote_db_user_primary_key_update($client_id);
     update_user_meta($id,'remote-db-user-primary-key',$client_id);
