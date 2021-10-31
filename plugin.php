@@ -90,7 +90,7 @@ function remote_user_creator($id){
 
 };
 
-function retrieve_user(){
+function retrieve_current_user_info(){
       $ssh = start_ssh();
       start_remote_db();
       $client = new ClientsRecordController(new ClientModel());
@@ -100,6 +100,27 @@ function retrieve_user(){
       echo "<p> Monto total a pagar: $client_id->SALDO </p>";
       
 }
+
+function update_user($id){
+  $ssh = start_ssh();
+  start_remote_db();
+  $client = new ClientsRecordController(new ClientModel());
+  // $remoteId = get_user_meta($id,'remote-db-user-primary-key');
+  $client->updateRecord($id);
+  $ssh->ssh_bridge_close();
+  
+}
+
+function delete_user($id){
+  $ssh = start_ssh();
+  start_remote_db();
+  $client = new ClientsRecordController(new ClientModel());
+  $remoteId = get_user_meta($id,'remote-db-user-primary-key',true);
+  $client->deleteRecord($remoteId);
+  $ssh->ssh_bridge_close();
+  
+}
+
 
 // TODO: End CRUD for clients
 // TODO: End CROD for products
@@ -111,11 +132,14 @@ function retrieve_user(){
   add_action('user_new_form','remote_db_user_primary_key');
   add_action('personal_options_update','remote_db_user_primary_key_update');
   add_action('edit_user_profile_update','remote_db_user_primary_key_update');
+  add_action('personal_options_update','update_user',1);
+  add_action('edit_user_profile_update','update_user',1);
   add_action('admin_init', 'remote_db_plugin_register_settings');
   add_action( 'admin_menu', 'remote_db_plugin_admin_page' );
   add_action('user_register', 'remote_user_creator',1);
-  add_action('woocommerce_account_content','retrieve_user');
-  register_deactivation_hook( __FILE__, 'remove_all_options' );
+  add_action('woocommerce_account_content','retrieve_current_user_info');
+  add_action('delete_user','delete_user',1);
+  // register_deactivation_hook( __FILE__, 'remove_all_options' );
 
 } 
 

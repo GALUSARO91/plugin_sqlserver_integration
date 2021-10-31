@@ -19,6 +19,12 @@ function remote_db_user_primary_key( $user ){
                     Escribe el ID del usuario en base remota.
                     </p>
                 </td>
+                <td>
+                  <input type="checkbox" value=1 name="user-in-db" />
+                  <p>
+                    Usuario ya en base de datos
+                  </p>
+                </td>
             </tr>
         </table>
         <?php
