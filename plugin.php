@@ -20,14 +20,11 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 require __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ .'/src/includes/admin-page-layouts.php';
 require_once __DIR__ .'/src/includes/admin-page-functions.php';
+require_once __DIR__ .'/src/includes/functions.php';
+require_once __DIR__ .'/src/includes/client-crud-functions.php';
 
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
-use ROOT\sshcontrollers\SSHHandler as SSH;
-use Illuminate\Database\Capsule\Manager as Capsule;
-use ROOT\controllers\ClientsRecordController;
-use ROOT\models\BaseModel;
-use ROOT\models\ClientModel;
 
 // use ROOT\models\Clients;
 //initiallize logger
@@ -36,38 +33,13 @@ $log->pushHandler(new StreamHandler(__DIR__.'/logs/app.log', Logger::DEBUG));
 
 // declare option names
 
-
 $GLOBALS['rm_db_option_names'] = array('ssh_host','ssh_port','ssh_user','ssh_local_port','ssh_remote_host','ssh_remote_port','ssh_connection_string', 'remote_db','db_username','db_password','db_conecction_string');
 
 try{
 
   // Connect to remote database
-  function start_remote_db(){
-    $capsule = new Capsule;
-    $connection_array = array(
-      'driver' => 'sqlsrv',
-      'host' => get_option('db_conecction_string'),
-      'database' => str_replace('_',' ',get_option('remote_db')),
-      'username' => get_option('db_username'),
-      'password' => get_option('db_password'),
-      'charset' => 'utf8',
-      'collation' => 'utf8_unicode_ci',
-      'prefix' => ''
-    );
-    
-  $capsule->addConnection($connection_array);
 
-  $capsule->setAsGlobal();
-  
-  $capsule->bootEloquent();
-
-  }
 // Boot SSH bridge
-  function start_ssh(){
-    $ssh = new SSH(get_option('ssh_host'),get_option('ssh_user'),get_option('ssh_local_port'),get_option('ssh_remote_host'),get_option('ssh_remote_port'),get_option('ssh_connection_string'));    
-    $ssh->ssh_bridge();
-    return $ssh;
-}
 
 function delete_remote_db_options($option){
   delete_option($option);
@@ -80,55 +52,18 @@ function remove_all_options(){
 
 }
 
-function remote_user_creator($id){
-    $ssh = start_ssh();
-    start_remote_db();
-    $client = new ClientsRecordController(new ClientModel());
-    $client_id = $client->createRecord($id);
-    update_user_meta($id,'remote-db-user-primary-key',$client_id);
-    $ssh->ssh_bridge_close();
-
-};
-
-function retrieve_current_user_info(){
-      $ssh = start_ssh();
-      start_remote_db();
-      $client = new ClientsRecordController(new ClientModel());
-      $id = get_user_meta(get_current_user_id(),'remote-db-user-primary-key');
-      $client_id = $client->retrieveRecord($id);
-      $ssh->ssh_bridge_close();
-      echo "<p> Monto total a pagar: $client_id->SALDO </p>";
-      
-}
-
-function update_user($id){
-  $ssh = start_ssh();
-  start_remote_db();
-  $client = new ClientsRecordController(new ClientModel());
-  // $remoteId = get_user_meta($id,'remote-db-user-primary-key');
-  $client->updateRecord($id);
-  $ssh->ssh_bridge_close();
-  
-}
-
-function delete_user($id){
-  $ssh = start_ssh();
-  start_remote_db();
-  $client = new ClientsRecordController(new ClientModel());
-  $remoteId = get_user_meta($id,'remote-db-user-primary-key',true);
-  $client->deleteRecord($remoteId);
-  $ssh->ssh_bridge_close();
-  
-}
-
 
 // TODO: End CRUD for clients
+// TODO: Function to handle retreive user info according their need
 // TODO: End CROD for products
 // TODO: End CRUD for transactions 
+// TODO: A function to compare and retrieve the data that user has in remote db
 
 
   add_action('show_user_profile','remote_db_user_primary_key');
   add_action('edit_user_profile', 'remote_db_user_primary_key');
+  add_action('show_user_profile','retrieve_user_info');
+  add_action('edit_user_profile', 'retrieve_user_info');
   add_action('user_new_form','remote_db_user_primary_key');
   add_action('personal_options_update','remote_db_user_primary_key_update');
   add_action('edit_user_profile_update','remote_db_user_primary_key_update');
@@ -137,7 +72,7 @@ function delete_user($id){
   add_action('admin_init', 'remote_db_plugin_register_settings');
   add_action( 'admin_menu', 'remote_db_plugin_admin_page' );
   add_action('user_register', 'remote_user_creator',1);
-  add_action('woocommerce_account_content','retrieve_current_user_info');
+  add_action('woocommerce_account_content','retrieve_user_info');
   add_action('delete_user','delete_user',1);
   // register_deactivation_hook( __FILE__, 'remove_all_options' );
 
