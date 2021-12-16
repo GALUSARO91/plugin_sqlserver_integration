@@ -33,8 +33,8 @@ function retrieve_user_info($user =null){
     start_remote_db();
     $client = new ClientsRecordController(new ClientModel());
     $found_id = $user==null?get_user_meta(get_current_user_id(),'remote-db-user-primary-key'):get_user_meta($user->ID,'remote-db-user-primary-key',true);
-    if(isset($client_info)){
-      $client_info = $client->retrieveRecord($found_id);
+    $client_info = $client->retrieveRecord($found_id);
+    if(isset($client_info)){ 
       $transactions_model = $client_info->hasManyThrough(
         FactVentasModel::class,
         ClientFactModel::class,

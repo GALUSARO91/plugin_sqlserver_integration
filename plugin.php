@@ -22,6 +22,7 @@ require_once __DIR__ .'/src/includes/admin-page-layouts.php';
 require_once __DIR__ .'/src/includes/admin-page-functions.php';
 require_once __DIR__ .'/src/includes/functions.php';
 require_once __DIR__ .'/src/includes/client-crud-functions.php';
+require_once __DIR__.'/src/includes/myaccountfunctions.php';
 
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
@@ -46,6 +47,9 @@ function delete_remote_db_options($option){
 
 }
 
+function register_transaction_history(){
+wp_enqueue_script('transaction-history-script',plugins_url('/src/includes/js/transaction-history.js',__FILE__ ),array('jquery','columnsToPrint','records'), '1.0', true);
+}
 function remove_all_options(){
 
   array_walk($GLOBALS['rm_db_option_names'],'delete_remote_db_options');
@@ -75,7 +79,11 @@ function remove_all_options(){
   add_action('woocommerce_account_content','retrieve_user_info');
   add_action('delete_user','delete_user',1);
   // register_deactivation_hook( __FILE__, 'remove_all_options' );
-
+  add_action( 'init', 'add_transactions_endpoint' );
+  add_filter( 'query_vars', 'transactions_query_vars',0);
+  add_filter( 'woocommerce_account_menu_items', 'add_transactions_endpoint_link_my_account' );
+  add_action( 'woocommerce_account_transaction-history_endpoint', 'get_transaction_history_content',10,1);  
+  add_action('wp_enqueue_scripts','transaction_history_records',10,1);  
 } 
 
 catch(\Exception $e){
