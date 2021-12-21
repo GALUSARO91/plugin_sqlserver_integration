@@ -47,9 +47,9 @@ function delete_remote_db_options($option){
 
 }
 
-function register_transaction_history(){
+/* function register_transaction_history(){
 wp_enqueue_script('transaction-history-script',plugins_url('/src/includes/js/transaction-history.js',__FILE__ ),array('jquery','columnsToPrint','records'), '1.0', true);
-}
+} */
 function remove_all_options(){
 
   array_walk($GLOBALS['rm_db_option_names'],'delete_remote_db_options');

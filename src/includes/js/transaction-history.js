@@ -1,6 +1,6 @@
 (function($){
         let recordsQuantity = 50
-        let historybar =$('#transactions-navbar')
+        let historybar =$('.transactions-pagebar')
         let historyContent = $('#transaction-history-content')
         let tableHeaders =""
         let tableRows = ""
@@ -25,20 +25,24 @@
              }
             let output = 
             `<table>
-               <tr>
-                ${tableHeaders}
+                <tr>
+                    ${tableHeaders}
                 </tr>
-                ${tableRows}
+                    ${tableRows}
             </table>`
             return output
         }
 
-        const navigator = () =>{
+        const navigator = (page = 0) =>{
             // TODO: Navigator
-            let pagesContainer = ""
+            let pagesContainer = ""          
             let totalPages = Math.floor(allrecords.records.length / $("#amountOfRecords").val());
             for (let i = 1; i<=totalPages;i++){
-                pagesContainer += `<li><button>${i}</button></li>`
+                if((page+1) == i){
+                    pagesContainer += `<li><button class="active">${i}</button></li>`
+                } else {
+                    pagesContainer += `<li><button>${i}</button></li>`
+                }
             }
             let navigationBar = `<li><button id = "previous">Anterior</button></li>
             ${pagesContainer}
@@ -51,7 +55,7 @@
 
             historybar.html(navigator())
             historyContent.html(recordsTable())  
-            $('#transactions-navbar').on("click","li",function(){
+            $('.transactions-pagebar').on("click","li",function(){
 
                     let pressedButton = $(this).children().text()
                     switch(pressedButton){
@@ -60,15 +64,14 @@
                         break
 
                         case "Siguiente":
-                            pageRecord = pageRecord < Math.floor(allrecords.records.length / recordsQuantity) ? pageRecord + 1 : pageRecord
+                            pageRecord = pageRecord < (Math.floor(allrecords.records.length / recordsQuantity)-1) ? pageRecord + 1 : pageRecord
                         break
 
                         default:
-                        pageRecord = pressedButton*1                         
+                        pageRecord = (pressedButton*1)-1                         
                     }
-                    historybar.html(navigator())
+                    historybar.html(navigator(pageRecord))
                     historyContent.html(recordsTable())
-                    // })
             })
             $('#setRecordsPerPage').on("click",function(){
                 
