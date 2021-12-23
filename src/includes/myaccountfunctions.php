@@ -18,9 +18,9 @@ function add_transactions_endpoint_link_my_account($items){
 
 function get_transaction_history_content(){
 
-    echo'<section id="trasaction-history"><ul class="transactions-pagebar"></ul><lable>Elija la cantidad de registros por pagina</lable>
+    echo'<section id="trasaction-history"><ul class="transactions-pagebar"></ul><div class="transaction-form"><lable>Elija la cantidad de registros por pagina</lable>
     <input type="number" id="amountOfRecords" name="amountOfRecords" value=50 min=1 max=100></input>
-    <input type="button" id="setRecordsPerPage" value="Cambiar"></input><div id="transaction-history-content"></div><ul class="transactions-pagebar"></ul></section>';
+    <input type="button" id="setRecordsPerPage" value="Cambiar"></input></div><div id="transaction-history-content"></div><ul class="transactions-pagebar"></ul></section>';
 
 }
 
