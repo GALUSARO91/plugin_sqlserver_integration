@@ -22,7 +22,9 @@ require_once __DIR__ .'/src/includes/admin-page-layouts.php';
 require_once __DIR__ .'/src/includes/admin-page-functions.php';
 require_once __DIR__ .'/src/includes/functions.php';
 require_once __DIR__ .'/src/includes/client-crud-functions.php';
+require_once __DIR__ .'/src/includes/product-crud-functions.php';
 require_once __DIR__.'/src/includes/myaccountfunctions.php';
+
 
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
@@ -73,17 +75,21 @@ function remove_all_options(){
   add_action('edit_user_profile_update','remote_db_user_primary_key_update');
   add_action('personal_options_update','update_user',1);
   add_action('edit_user_profile_update','update_user',1);
-  add_action('admin_init', 'remote_db_plugin_register_settings');
-  add_action( 'admin_menu', 'remote_db_plugin_admin_page' );
-  add_action('user_register', 'remote_user_creator',1);
+  add_action('admin_init','remote_db_plugin_register_settings');
+  add_action('admin_menu','remote_db_plugin_admin_page' );
+  add_action('user_register','remote_user_creator',1);
   add_action('woocommerce_account_content','retrieve_user_info');
   add_action('delete_user','delete_user',1);
   // register_deactivation_hook( __FILE__, 'remove_all_options' );
-  add_action( 'init', 'add_transactions_endpoint' );
-  add_filter( 'query_vars', 'transactions_query_vars',0);
-  add_filter( 'woocommerce_account_menu_items', 'add_transactions_endpoint_link_my_account' );
-  add_action( 'woocommerce_account_transaction-history_endpoint', 'get_transaction_history_content',10,1);  
+  add_action('init','add_transactions_endpoint');
+  add_filter('query_vars','transactions_query_vars',0);
+  add_filter('woocommerce_account_menu_items','add_transactions_endpoint_link_my_account');
+  add_action('woocommerce_account_transaction-history_endpoint', 'get_transaction_history_content',10,1);  
   add_action('wp_enqueue_scripts','transaction_history_records',10,1);  
+  add_action('save_post_product','remote_product_creator',10,1);
+  add_action('before_delete_post','delete_product',10,1);
+  add_action('pre_get_posts','retrieve_product_info',10,1);
+
 } 
 
 catch(\Exception $e){

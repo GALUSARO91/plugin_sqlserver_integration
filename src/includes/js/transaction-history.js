@@ -2,7 +2,7 @@
         let recordsQuantity = 50
         let historybar =$('.transactions-pagebar')
         let historyContent = $('#transaction-history-content')
-        let tableHeaders =""
+        let tableHeaders ="<th>No</th>"
         let tableRows = ""
         let pageRecord =0
         let beginning = 0
@@ -12,11 +12,11 @@
         const recordsTable = () =>{
             recordsQuantity = $("#amountOfRecords").val()*1
             beginning = pageRecord*recordsQuantity
-            let endOfRecord = beginning + recordsQuantity
+            let endOfRecord = (beginning + recordsQuantity)>allrecords.records.length?allrecords.records.length:(beginning + recordsQuantity)
             tableRows = ""
             let transactions = allrecords.records    
             for (beginning; beginning<endOfRecord; beginning++){
-                tableRows += "<tr>"
+                tableRows += `<tr><td>${beginning+1}</td>`
                 let sigleRecord = transactions[beginning]
                 columnsToPrint.columns.forEach(function(column){
                         tableRows += "<td>" + sigleRecord[column] + "</td>"
@@ -36,7 +36,7 @@
         const navigator = (page = 0) =>{
             // TODO: Navigator
             let pagesContainer = ""          
-            let totalPages = Math.floor(allrecords.records.length / $("#amountOfRecords").val());
+            let totalPages = Math.ceil(allrecords.records.length / $("#amountOfRecords").val());
             for (let i = 1; i<=totalPages;i++){
                 if((page+1) == i){
                     pagesContainer += `<li><button class="active">${i}</button></li>`
@@ -64,7 +64,7 @@
                         break
 
                         case "Siguiente":
-                            pageRecord = pageRecord < (Math.floor(allrecords.records.length / recordsQuantity)-1) ? pageRecord + 1 : pageRecord
+                            pageRecord = pageRecord < (Math.ceil(allrecords.records.length / recordsQuantity)-1) ? pageRecord + 1 : pageRecord
                         break
 
                         default:
@@ -74,7 +74,7 @@
                     historyContent.html(recordsTable())
             })
             $('#setRecordsPerPage').on("click",function(){
-                
+                pageRecord = 0
                 historybar.html(navigator())
                 historyContent.html(recordsTable())  
         })

@@ -12,8 +12,7 @@ class ClientsRecordController extends BaseRecordsController{
 
 
     public function createRecord($id){
-        
-        // if(!isset($_POST['user-in-db'])){
+
         $already_set = $this->BaseModel::where('COD_ID',$_POST['remote-db-user-primary-key'])->first();
         if(isset($_POST['remote-db-user-primary-key']) && $_POST['role'] == 'customer'){
             $client_id = $this->set_random_id($_POST['remote-db-user-primary-key'],!is_null($already_set)?$already_set->COD_ID:'');
@@ -28,10 +27,6 @@ class ClientsRecordController extends BaseRecordsController{
             $this->BaseModel->save();
             return $client_id;
         }
-    // } else {
-        // return $_POST['remote-db-user-primary-key'];
-    // }
-
     }
 
     public function retrieveRecord($id)
