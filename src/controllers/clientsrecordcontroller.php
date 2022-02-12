@@ -14,16 +14,17 @@ class ClientsRecordController extends BaseRecordsController{
     public function createRecord($id){
 
         $already_set = $this->BaseModel::where('COD_ID',$_POST['remote-db-user-primary-key'])->first();
-        if(isset($_POST['remote-db-user-primary-key']) && $_POST['role'] == 'customer'){
+        if($_POST['role'] == 'customer'){
             $client_id = $this->set_random_id($_POST['remote-db-user-primary-key'],!is_null($already_set)?$already_set->COD_ID:'');
             $client_name = $_POST['first_name']." ".$_POST['last_name'];
             $this->BaseModel->timestamps = false;
-            $this->BaseModel->COD_SUC = 01;
-            $this->BaseModel->COD_ZON = 0;
+            $this->BaseModel->Cod_Emp = "01";
+            $this->BaseModel->COD_SUC = "01";
+            $this->BaseModel->COD_ZON = "01";
             $this->BaseModel->COD_ID = $client_id;
             $this->BaseModel->NOMBRE = $client_name;
             $this->BaseModel->EMAIL = $_POST['email'];
-            $this->BaseModel->CUENTA = 0;
+            $this->BaseModel->CUENTA = '1103-01-1';
             $this->BaseModel->save();
             return $client_id;
         }
@@ -62,12 +63,18 @@ class ClientsRecordController extends BaseRecordsController{
     }
     function set_random_id(string $id_given, string $id_in_remote_db){
         $new_id = null;
+
         if($id_given == $id_in_remote_db){
-            $new_id = mt_rand(1,99999999);
+            $new_id = $this->BaseModel->max('COD_ID')+1;
             $new_id_in_remote_db = $this->BaseModel::where('COD_ID',$new_id)->first();
             return $this->set_random_id($new_id,!is_null($new_id_in_remote_db )?$new_id_in_remote_db->COD_ID:''); 
         } else {
-            $new_id = $id_given;
+            
+            settype($id_given,'string');
+            for($i = 0; $i < 5-strlen($id_given);$i++){
+                $new_id .= '0';
+            }
+            $new_id.=$id_given;
             return $new_id;
         }
 

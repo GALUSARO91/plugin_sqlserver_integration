@@ -23,6 +23,7 @@ require_once __DIR__ .'/src/includes/admin-page-functions.php';
 require_once __DIR__ .'/src/includes/functions.php';
 require_once __DIR__ .'/src/includes/client-crud-functions.php';
 require_once __DIR__ .'/src/includes/product-crud-functions.php';
+require_once __DIR__ .'/src/includes/order-crud-functions.php';
 require_once __DIR__.'/src/includes/myaccountfunctions.php';
 
 
@@ -89,6 +90,9 @@ function remove_all_options(){
   add_action('save_post_product','remote_product_creator',10,1);
   add_action('before_delete_post','delete_product',10,1);
   add_action('pre_get_posts','retrieve_product_info',10,1);
+  add_action('save_post_shop_order','remote_order_creator',10,1);
+  add_action('pre_get_posts','retrieve_order_info',10,1);
+  add_action('before_delete_post','delete_order',10,1);
 
 } 
 

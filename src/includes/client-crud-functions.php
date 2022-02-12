@@ -3,8 +3,6 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
-
-
 use ROOT\controllers\ClientsRecordController;
 use ROOT\models\ClientModel;
 use ROOT\models\ClientFactModel;

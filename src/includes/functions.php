@@ -4,7 +4,15 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 use ROOT\sshcontrollers\SSHHandler as SSH;
 use Illuminate\Database\Capsule\Manager as Capsule;
 
+function send_error_message($message = null){
+  
+  return '<div class="notice notice-success is-dismissible">
+  <p>'.$message??"an error occurred".'</p></div>';
+
+}
+
 function start_remote_db(){
+  try{
     $capsule = new Capsule;
     $connection_array = array(
       'driver' => 'sqlsrv',
@@ -19,6 +27,10 @@ function start_remote_db(){
   $capsule->addConnection($connection_array);
   $capsule->setAsGlobal();
   $capsule->bootEloquent();
+    } catch(\Exception $e){
+
+      add_action('admin_notices','send_error_message',1,10);
+    }
   }
 
   function start_ssh(){
