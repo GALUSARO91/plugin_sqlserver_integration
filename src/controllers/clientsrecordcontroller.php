@@ -11,20 +11,16 @@ class ClientsRecordController extends BaseRecordsController{
     }
 
 
-    public function createRecord($id){
+    public function createRecord($id, $args = null){
 
-        $already_set = $this->BaseModel::where('COD_ID',$_POST['remote-db-user-primary-key'])->first();
+        $already_set = $this->BaseModel::where('COD_ID',$id)->first();
         if($_POST['role'] == 'customer'){
-            $client_id = $this->set_random_id($_POST['remote-db-user-primary-key'],!is_null($already_set)?$already_set->COD_ID:'');
-            $client_name = $_POST['first_name']." ".$_POST['last_name'];
+            $client_id = $this->set_random_id($id,!is_null($already_set)?$already_set->COD_ID:'');
             $this->BaseModel->timestamps = false;
-            $this->BaseModel->Cod_Emp = "01";
-            $this->BaseModel->COD_SUC = "01";
-            $this->BaseModel->COD_ZON = "01";
             $this->BaseModel->COD_ID = $client_id;
-            $this->BaseModel->NOMBRE = $client_name;
-            $this->BaseModel->EMAIL = $_POST['email'];
-            $this->BaseModel->CUENTA = '1103-01-1';
+            foreach($args as $key=>$value){
+                $this->BaseModel->$key = $value;
+            }
             $this->BaseModel->save();
             return $client_id;
         }

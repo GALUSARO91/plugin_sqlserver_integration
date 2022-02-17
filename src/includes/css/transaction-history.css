@@ -1,0 +1,51 @@
+/* Transaction History */
+.transactions-pagebar{
+    display: flex;
+    align-self: center;
+    list-style: none;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+}
+
+.transactions-pagebar button{
+    padding: 0.5em;
+    background-color: transparent;
+    color: black
+    
+}
+.transactions-pagebar button:hover{
+    background-color: #E6E6FA;
+}
+
+.transactions-pagebar button.active{
+    background-color: #0e88be;
+    color: #ffff
+}
+
+#transaction-history-content table{
+    margin: 0 auto;
+}
+
+#transaction-history-content table, td{
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+#transaction-history-content th {
+    border-right: 1px solid black;
+    border-bottom-style: double;
+    color:white;
+    background-color: #000080;
+}
+
+.transaction-form{
+    margin: 1rem auto
+}
+#transaction-history-content tr:nth-child(odd){
+    background-color: #FFFFF0;
+}
+#transaction-history-content tr:nth-child(even){
+    background-color: #B0E0E6;
+}

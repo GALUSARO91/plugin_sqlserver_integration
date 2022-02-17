@@ -13,5 +13,6 @@ class ClientModel extends Model{
 
     protected $primaryKey = 'COD_ID';
 
+    const CREATED_AT = 'FEC_ING';
 
 }

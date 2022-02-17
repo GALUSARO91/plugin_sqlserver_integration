@@ -4,28 +4,85 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 function remote_db_user_primary_key( $user ){
         ?>
-        <h3>ID de usuario BD Remota</h3>
+        <h3>Informacion de usuario para el sistema principal</h3>
         <table class="form-table">
-            <tr>
+<!--             <tr>
                 <th>
                     <label for="remote-db-user-primary-key">ID de usuario BD Remota</label>
                 </th>
+            </tr> -->
+            <tr>    
                 <td>
                 <?php
                 $value = !is_string($user)?esc_attr(get_user_meta($user->ID, 'remote-db-user-primary-key', true )):'';
                 ?>
-                    <input type="number" class="regular-text ltr" id="remote-db-user-primary-key" name="remote-db-user-primary-key" value= <?php echo $value ?> title="Escribe el ID del usuario en base remota.">
-                    <p class="description">
+                    <label for="remote-db-user-primary-key">ID de usuario BD Remota</label>
+                    <input type="number" class="regular-text ltr" id="remote-db-user-primary-key" name="remote-db-user-primary-key"<?php 
+                    if($value != ''){
+                      echo "value=$value";
+                    }
+                    ?> 
+                    placeholder="Escribe el ID del usuario en base remota.">
+<!--                     <p class="description">
                     Escribe el ID del usuario en base remota.
-                    </p>
+                    </p> -->
                 </td>
-                <?php               
+            <td>
+                <?php
+                $value = !is_string($user)?esc_attr(get_user_meta($user->ID, 'NUM_RUC', true )):'';
+                ?>
+                     <label for="NUM_RUC">Numero RUC</label>
+                    <input type="text" class="regular-text ltr" id="NUM_RUC" name="NUM_RUC" <?php 
+                    if($value != ''){
+                      echo "value=$value";
+                    }
+                    ?> 
+                    placeholder="Escribe el numero RUC del cliente">
+                  <!--   <p class="description">
+                    Escribe el numero RUC del cliente.
+                    </p> -->
+                </td>
+
+            </tr>
+            <tr>
+            <td>
+                <?php
+                $value = !is_string($user)?esc_attr(get_user_meta($user->ID, 'PLAZO', true )):'';
+                ?>
+                    <label for="PLAZO">Plazo</label>
+                    <input type="number" class="regular-text ltr" id="PLAZO" name="PLAZO" <?php 
+                    if($value != ''){
+                      echo "value=$value";
+                    }
+                    ?> 
+                    placeholder="Escribe el plazo de credito para el cliente">
+                  <!--   <p class="description">
+                    Escribe el numero RUC del cliente.
+                    </p> -->
+                </td>
+                <td>
+                <?php
+                $value = !is_string($user)?esc_attr(get_user_meta($user->ID, 'PLAZO', true )):'';
+                ?>
+                    <label for="LIMITE">Limite de Credito</label>
+                    <input type="number" class="regular-text ltr" id="limite" name="LIMITE" <?php 
+                    if($value != ''){
+                      echo "value=$value";
+                    }
+                    ?> 
+                    placeholder="Escribe el limite de credito para el cliente">
+                  <!--   <p class="description">
+                    Escribe el numero RUC del cliente.
+                    </p> -->
+                </td>
+
+            </tr>
+            <?php               
                 if(is_string($user)){  
-                  echo '<td><input type="checkbox" value=1 name="user-in-db" />';
-                  echo '<p> Usuario ya en base de datos </p> </td>';
+                  echo '<tr><td><input type="checkbox" value=1 name="user-in-db" id="user-in-db"/>';
+                  echo '<lable for="user-in-db"> Usuario ya en base de datos </lable> </td></tr>';
                 }
                 ?>
-            </tr>
         </table>
         <?php
 }

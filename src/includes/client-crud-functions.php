@@ -16,13 +16,21 @@ function remote_user_creator($id){
     $ssh = start_ssh();
     start_remote_db();
     $client = new ClientsRecordController(new ClientModel());
-    $client_id = $client->createRecord($id);
+    $args = [
+      "Cod_Emp" => "01",
+      "COD_SUC" => "01",
+      "COD_ZON" => "01",
+      "NOMBRE" => $_POST['first_name']." ".$_POST['last_name'],
+      "EMAIL" => $_POST['email'],
+      "CUENTA" => '1103-01-1',
+    ];
+    $client_id = $client->createRecord($_POST['remote-db-user-primary-key'],$args);
     update_user_meta($id,'remote-db-user-primary-key',$client_id);
     $ssh->ssh_bridge_close();
   }
-  if (isset($_POST['remote-db-user-primary-key'])){
+/*   if (isset($_POST['remote-db-user-primary-key'])){
     update_user_meta($id,'remote-db-user-primary-key',$_POST['remote-db-user-primary-key']);
-  }
+  } */
 };
 
 function retrieve_user_info($user =null){
@@ -49,7 +57,7 @@ function retrieve_user_info($user =null){
     update_user_meta($user == null ?get_current_user_id():$user->ID,'billing_city',$client_info->CIUDAD);
     update_user_meta($user == null ?get_current_user_id():$user->ID,'billing_phone',$client_info->TELEFONO_1);
     update_user_meta($user == null ?get_current_user_id():$user->ID,'credit_limit',$client_info->LIMITE);
-    update_user_meta($user == null ?get_current_user_id():$user->ID,'daily_limit',$client_info->LIMITE_D);
+    // update_user_meta($user == null ?get_current_user_id():$user->ID,'daily_limit',$client_info->LIMITE_D);
     update_user_meta($user == null ?get_current_user_id():$user->ID,'billing_first_name',$client_info->CONTACTO_1);
     update_user_meta($user == null ?get_current_user_id():$user->ID,'all_transactions',$allTransactions);
     }
@@ -71,7 +79,7 @@ function delete_user($user =null){
   $ssh = start_ssh();
   start_remote_db();
   $client = new ClientsRecordController(new ClientModel());
-  $remoteId = $user==null?get_user_meta(get_current_user_id(),'remote-db-user-primary-key'):get_user_meta($user->ID,'remote-db-user-primary-key',true);
+  $remoteId = $user==null?get_user_meta(get_current_user_id(),'remote-db-user-primary-key'):get_user_meta($user,'remote-db-user-primary-key',true);
   $client->deleteRecord($remoteId);
   $ssh->ssh_bridge_close();
   
