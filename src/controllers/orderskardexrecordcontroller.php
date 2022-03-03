@@ -2,7 +2,7 @@
 
 namespace ROOT\controllers;
 
-class OrdersTarjetaDesRecordController extends BaseRecordsController{
+class OrdersKardexRecordController extends BaseRecordsController{
 
     private $BaseModel;
 
@@ -12,25 +12,23 @@ class OrdersTarjetaDesRecordController extends BaseRecordsController{
     }
 
 
-    function createRecord($id,$args = null){
-        $remoteId = $this->calculateNumReg($id);
-        // $recordFound = $this->BaseModel::where('NUM_REG',$remoteId)->first()??"";
+    function createRecord($id, $args = null){
         if(isset($args)){
             // if($recordFound == ""){
                 $this->BaseModel->timestamps = false;
-                $this->BaseModel->NUM_REG = $remoteId;
+                $this->BaseModel->NUM_REG = $id;
                 foreach($args as $key=>$value){
                     $this->BaseModel->$key = $value;
                 }
                 $this->BaseModel->save();
-                return $remoteId;
+                // return $remoteId;
             // } 
         }
            
     }
 
     function retrieveRecord($id){
-        $remoteId = $this->calculateNumReg($id);
+        $remoteId = $this->calculateId($id);
         if(isset($remoteId)&& $remoteId!=""){
             $return = $this->BaseModel::where('NUM_REG',$remoteId)->first();
             return $return;
@@ -39,26 +37,13 @@ class OrdersTarjetaDesRecordController extends BaseRecordsController{
 
     function updateRecord($id)
     {
-        // $remoteId = $this->calculateNumReg($id);
-        $recordFound = $this->BaseModel::where('NUM_REG',$id)->first()??"";
-        if(isset($args)){
-            if($recordFound != "") {
-                $recordFound->timestamps = false;
-                // $recordFound->NUM_REG = $remoteId;
-                foreach($args as $key=>$value){
-                    $recordFound->$key = $value;
-                }
-                $recordFound->save();
-            }
-        }
-           
         
     }
 
     function deleteRecord($id)
     {
-        // $remoteId = $this->calculateId($id);
-        $this->BaseModel::where('NUM_REG',$id)->first()->delete();   
+        $remoteId = $this->calculateId($id);
+        $this->BaseModel::where('NUM_REG',$remoteId)->first()->delete();   
     }
 
     function calculateNumReg(string $id=null,string $remote_id=null)
@@ -102,21 +87,5 @@ class OrdersTarjetaDesRecordController extends BaseRecordsController{
         
     }
 
-    function set_num_doc(string $id_given =null, string $id_in_remote_db =null){
-        $new_id = null;
 
-        if($id_given == $id_in_remote_db){
-            $new_id = $this->BaseModel->max('NUM_DOC')+1;
-            $new_id_in_remote_db = $this->BaseModel::where('NUM_DOC',$new_id)->first();
-            return $this->set_num_doc($new_id,!is_null($new_id_in_remote_db )?$new_id_in_remote_db->COD_ID:''); 
-        } else {
-            
-            settype($id_given,'string');
-            for($i = 0; $i < 7-strlen($id_given);$i++){
-                $new_id .= '0';
-            }
-            $new_id.=$id_given;
-            return $new_id;
-        }
-    }
 }

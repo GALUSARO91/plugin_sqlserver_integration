@@ -13,5 +13,11 @@ class CotizacionKardexModel extends Model{
 
     protected $primaryKey = 'NUM_REG';
 
+    public $incrementing = false;
 
+    protected $keyType = 'string';
+
+    protected $guarded = [];
+
+    public $timestamps = false;
 }

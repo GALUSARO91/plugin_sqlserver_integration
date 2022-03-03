@@ -13,8 +13,23 @@ $log->pushHandler(new StreamHandler(__DIR__.'/logs/app.log', Logger::DEBUG));
 function remote_product_creator($product = null){
     $ssh = start_ssh();
     start_remote_db();
+    $post_data = get_post($product);
+    $prod_attributes = get_post_meta($product,'_product_attributes',true);
+    $remoteId = ($prod_attributes != "" and $prod_attributes['gcm_id']['value'] != false) ? $prod_attributes['gcm_id']['value']:"";
+    $args =[
+      "status" =>$post_data->post_status,
+      "Cod_emp" => "01",
+      "COD_GRUP" => "01",
+      "COD_LIN" => "02",
+      "U_MEDIDA" => 2,
+      "COD_IMP" => 2,
+      "NOM_PROD" => $post_data->post_title,
+      "PRECIO_VTA" => get_post_meta($product,'_price',true),
+      "LIQUIDADO" => "N"
+    ];
+    
     $myproduct = new ProductsRecordController(new ProductModel());
-    $myproduct->createRecord($product);
+    $myproduct->createRecord($remoteId,$args);
     $ssh->ssh_bridge_close();
 };
 
@@ -31,9 +46,18 @@ function retrieve_product_info($post_query =null){
       $remoteId = ($prod_attributes != "" and $prod_attributes['gcm_id']['value'] != false) ? $prod_attributes['gcm_id']['value']:"";
       $remoteProductInfo = $myproduct->retrieveRecord($remoteId);
       $ssh->ssh_bridge_close();
-      update_post_meta($product->ID,"_price",$remoteProductInfo->PRECIO_VTA);
-      
+      if(isset($remoteProductInfo)){
+      wp_update_post([
+        'ID' =>$remoteId,
+        'post_title' =>$remoteProductInfo->NOM_PROD,
+        'meta_input'=>[
+          '_price'=>$remoteProductInfo->PRECIO_VTA
+        ],
+      ]);
+
+      // update_post_meta($product->ID,"_price",$remoteProductInfo->PRECIO_VTA);
     }
+ }
 
     
 }

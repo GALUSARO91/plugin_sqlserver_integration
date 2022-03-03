@@ -13,5 +13,9 @@ class CotizacionTarjetaDesModel extends Model{
 
     protected $primaryKey = 'NUM_REG';
 
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
 
 }

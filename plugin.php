@@ -90,7 +90,7 @@ function remove_all_options(){
   add_action('save_post_product','remote_product_creator',10,1);
   add_action('before_delete_post','delete_product',10,1);
   add_action('pre_get_posts','retrieve_product_info',10,1);
-  add_action('save_post_shop_order','remote_order_creator',10,1);
+  add_action('save_post','remote_order_creator',20,1);
   add_action('pre_get_posts','retrieve_order_info',10,1);
   add_action('before_delete_post','delete_order',10,1);
 
