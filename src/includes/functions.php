@@ -40,3 +40,14 @@ function start_remote_db(){
 }
 
 
+function handle_product_remote_id($query, $query_vars){
+        // $test = $query_vars['gcm_id'];
+    if ( ! empty( $query_vars['gcm_id'] ) ) {
+      $query['meta_query'][] = array(
+        'key' => 'gcm_id',
+        'value' => esc_attr( $query_vars['gcm_id'] ),
+      );
+    }
+
+    return $query;
+}

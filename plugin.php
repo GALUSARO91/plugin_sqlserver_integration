@@ -59,6 +59,10 @@ function remove_all_options(){
 
 }
 
+function disable_autosave() {
+  wp_deregister_script( 'autosave' );
+  }
+
 
 // TODO: End CRUD for clients
 // TODO: Function to handle retreive user info according their need
@@ -83,16 +87,18 @@ function remove_all_options(){
   add_action('delete_user','delete_user',1);
   // register_deactivation_hook( __FILE__, 'remove_all_options' );
   add_action('init','add_transactions_endpoint');
+  add_action('init','disable_autosave');
   add_filter('query_vars','transactions_query_vars',0);
   add_filter('woocommerce_account_menu_items','add_transactions_endpoint_link_my_account');
   add_action('woocommerce_account_transaction-history_endpoint', 'get_transaction_history_content',10,1);  
   add_action('wp_enqueue_scripts','transaction_history_records',10,1);  
   add_action('save_post_product','remote_product_creator',10,1);
   add_action('before_delete_post','delete_product',10,1);
-  add_action('pre_get_posts','retrieve_product_info',10,1);
+  // add_action('pre_get_posts','retrieve_product_info',10,1);
   add_action('save_post','remote_order_creator',20,1);
   add_action('pre_get_posts','retrieve_order_info',10,1);
   add_action('before_delete_post','delete_order',10,1);
+  // add_filter('woocommerce_product_data_store_cpt_get_products_query', 'handle_product_remote_id',5, 2 );
 
 } 
 

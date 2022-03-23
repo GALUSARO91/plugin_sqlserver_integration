@@ -4,7 +4,7 @@ namespace ROOT\controllers;
 
 class OrdersKardexRecordController extends BaseRecordsController{
 
-    private $BaseModel;
+    public $BaseModel;
 
     function __construct($BaseModel){
 
@@ -12,12 +12,12 @@ class OrdersKardexRecordController extends BaseRecordsController{
     }
 
 
-    function createRecord($id, $args = null){
-        if(isset($args)){
+    function createRecord($id){
+        if(isset($id)){
             // if($recordFound == ""){
                 $this->BaseModel->timestamps = false;
-                $this->BaseModel->NUM_REG = $id;
-                foreach($args as $key=>$value){
+                // $this->BaseModel->NUM_REG = $id;
+                foreach($id as $key=>$value){
                     $this->BaseModel->$key = $value;
                 }
                 $this->BaseModel->save();
@@ -28,9 +28,9 @@ class OrdersKardexRecordController extends BaseRecordsController{
     }
 
     function retrieveRecord($id){
-        $remoteId = $this->calculateId($id);
-        if(isset($remoteId)&& $remoteId!=""){
-            $return = $this->BaseModel::where('NUM_REG',$remoteId)->first();
+        // $remoteId = $this->calculateId($id);
+        if(isset($id)&& $id!=""){
+            $return = $this->BaseModel::where('NUM_REG',$id)->get();
             return $return;
             }
     }
@@ -61,7 +61,7 @@ class OrdersKardexRecordController extends BaseRecordsController{
         }while($latest_num >= $id_num);
         settype($id_num,'string');
         $return_id = "0101A";
-        for($i = 1; $i < 10-strlen($id_num);$i++){
+        for($i = 1; $i < 11-strlen($id_num);$i++){
             $return_id .= "0";
         }
         $return_id .= $id_num;
