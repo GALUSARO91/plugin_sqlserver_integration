@@ -30,7 +30,7 @@ require_once __DIR__.'/src/includes/myaccountfunctions.php';
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
-// use ROOT\models\Clients;
+
 //initiallize logger
 $log = new Logger('app');
 $log->pushHandler(new StreamHandler(__DIR__.'/logs/app.log', Logger::DEBUG));
@@ -59,17 +59,13 @@ function remove_all_options(){
 
 }
 
+//Note: Disabling auto-save so plugin can work correctly saving orders
+
 function disable_autosave() {
   wp_deregister_script( 'autosave' );
   }
 
-
-// TODO: End CRUD for clients
-// TODO: Function to handle retreive user info according their need
-// TODO: End CROD for products
-// TODO: End CRUD for transactions 
-// TODO: A function to compare and retrieve the data that user has in remote db
-
+  //Link all actions to their respective hooks
 
   add_action('show_user_profile','remote_db_user_primary_key');
   add_action('edit_user_profile', 'remote_db_user_primary_key');
@@ -94,7 +90,7 @@ function disable_autosave() {
   add_action('wp_enqueue_scripts','transaction_history_records',10,1);  
   add_action('save_post_product','remote_product_creator',10,1);
   add_action('before_delete_post','delete_product',10,1);
-  // add_action('pre_get_posts','retrieve_product_info',10,1);
+  add_action('pre_get_posts','retrieve_product_info',10,1);
   add_action('save_post','remote_order_creator',20,1);
   add_action('pre_get_posts','retrieve_order_info',10,1);
   add_action('before_delete_post','delete_order',10,1);

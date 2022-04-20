@@ -13,26 +13,34 @@ class OrdersKardexRecordController extends BaseRecordsController{
 
 
     function createRecord($id){
-        if(isset($id)){
-            // if($recordFound == ""){
-                $this->BaseModel->timestamps = false;
-                // $this->BaseModel->NUM_REG = $id;
-                foreach($id as $key=>$value){
-                    $this->BaseModel->$key = $value;
-                }
-                $this->BaseModel->save();
-                // return $remoteId;
-            // } 
+        try{
+            if(isset($id)){
+                // if($recordFound == ""){
+                    $this->BaseModel->timestamps = false;
+                    // $this->BaseModel->NUM_REG = $id;
+                    foreach($id as $key=>$value){
+                        $this->BaseModel->$key = $value;
+                    }
+                    $this->BaseModel->save();
+                    // return $remoteId;
+                // } 
+                return true;
+            }
+        } catch (\Exception $e){
+            return $e;
         }
-           
     }
 
     function retrieveRecord($id){
         // $remoteId = $this->calculateId($id);
-        if(isset($id)&& $id!=""){
-            $return = $this->BaseModel::where('NUM_REG',$id)->get();
-            return $return;
-            }
+        try{
+            if(isset($id)&& $id!=""){
+                $return = $this->BaseModel::where('NUM_REG',$id)->get();
+                return $return;
+                }
+        } catch(\Exception $e){
+            return $e;
+        }
     }
 
     function updateRecord($id)
@@ -42,8 +50,13 @@ class OrdersKardexRecordController extends BaseRecordsController{
 
     function deleteRecord($id)
     {
-        $remoteId = $this->calculateId($id);
-        $this->BaseModel::where('NUM_REG',$remoteId)->first()->delete();   
+        try{    
+            $remoteId = $this->calculateId($id);
+            $this->BaseModel::where('NUM_REG',$remoteId)->first()->delete();   
+            return true;
+        }catch(\Exception $e){
+            return $e;
+        }
     }
 
     function calculateNumReg(string $id=null,string $remote_id=null)

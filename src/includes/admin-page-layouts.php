@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * File with the lay-outs for the admin page options
+ */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 function remote_db_user_primary_key( $user ){

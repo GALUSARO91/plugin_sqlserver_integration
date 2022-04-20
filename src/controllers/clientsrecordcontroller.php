@@ -1,5 +1,7 @@
 <?php
 namespace ROOT\controllers;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 
 class ClientsRecordController extends BaseRecordsController{
 
@@ -12,50 +14,67 @@ class ClientsRecordController extends BaseRecordsController{
 
 
     public function createRecord($id, $args = null){
-
+        try{
         $already_set = $this->BaseModel::where('COD_ID',$id)->first();
-        if($_POST['role'] == 'customer'){
-            $client_id = $this->set_random_id($id,!is_null($already_set)?$already_set->COD_ID:'');
-            $this->BaseModel->timestamps = false;
-            $this->BaseModel->COD_ID = $client_id;
-            foreach($args as $key=>$value){
-                $this->BaseModel->$key = $value;
+            if($_POST['role'] == 'customer'){
+                $client_id = $this->set_random_id($id,!is_null($already_set)?$already_set->COD_ID:'');
+                $this->BaseModel->timestamps = false;
+                $this->BaseModel->COD_ID = $client_id;
+                foreach($args as $key=>$value){
+                    $this->BaseModel->$key = $value;
+                }
+                $this->BaseModel->save();
+                return $client_id;
             }
-            $this->BaseModel->save();
-            return $client_id;
+        }catch(\Exception $e){
+
+            return $e;
         }
     }
 
     public function retrieveRecord($id)
     {
-        if(isset($id)&& $id!=""){
-        $return = $this->BaseModel::where('COD_ID',$id)->first();
-        return $return;
+        try{
+            if(isset($id)&& $id!=""){
+                $return = $this->BaseModel::where('COD_ID',$id)->first();
+                return $return;
+            }
+        }catch(\Exception $e){
+        //    $this->remoteDBPluginErrorHandler($e->getCode(),$e->getMessage());
+            // $log = new Logger('app');
+            // $log->pushHandler(new StreamHandler(__DIR__.'/logs/app.log', Logger::DEBUG));
+            // $log->error($e->getCode());
+            // $error = new WP_Error($e-getCode(),$e->getMessage());
+            return $e;
         }
+
     }
     
-    public function updateRecord($id)
+    public function updateRecord($id,$args=null)
     {
-        // TODO: create function updateRecord
-        if(isset($id)&& $id!=""){
-        $client_name = $_POST['first_name']." ".$_POST['last_name'];
-        $remote_user = $this->BaseModel::where('COD_ID',$_POST['remote-db-user-primary-key'])->first();
-        $remote_user->timestamps = false;
-        $remote_user->NOMBRE = $client_name;
-        $remote_user->DIRECCION = $_POST['billing_address_1'];
-        $remote_user->CIUDAD = $_POST['billing_city'];
-        $remote_user->TELEFONO_1 = $_POST['billing_phone'];
-        $remote_user->EMAIL = $_POST['email'];
-        $remote_user->save();
-        }        
-
+        try{
+            if(isset($id)&& $id!=""){
+            $remote_user = $this->BaseModel::where('COD_ID',$_POST['remote-db-user-primary-key'])->first();
+            foreach($args as $key=>$value){
+                $remote_user->$key = $value;
+            }
+                $remote_user->save();
+            }        
+        } catch(\Exception $e){
+                return $e;
+        }
     }
 
     public function deleteRecord($id)
     {
-        if(isset($id)&& $id!=""){
-        $this->BaseModel::where('COD_ID',$id)->first()->delete();
-        }
+        try{
+            if(isset($id)&& $id!=""){
+                $this->BaseModel::where('COD_ID',$id)->first()->delete();
+                return true;
+            }
+        }catch(\Exception $e){
+            return $e;
+        }    
     }
     function set_random_id(string $id_given, string $id_in_remote_db){
         $new_id = null;

@@ -1,4 +1,7 @@
 <?php
+/**
+ * File with the functions to display the plugin options
+ */
 
 
 function remote_db_user_primary_key_update( $user_id ){

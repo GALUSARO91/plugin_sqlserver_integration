@@ -4,8 +4,10 @@
  * @Param $BaseModel of tipe Illuminate\Database\Model 
  */
 namespace ROOT\controllers;
+use ROOT\traits\remotedbpluginerrorhandler;
 
 abstract class BaseRecordsController  {
+    // use remotedbpluginerrorhandler;
 
     private $BaseModel;
 
@@ -23,5 +25,8 @@ abstract class BaseRecordsController  {
 
     abstract public function deleteRecord($id);
 
+    function getModel(){
+        return $this->BaseModel;
+    }
 
 }
