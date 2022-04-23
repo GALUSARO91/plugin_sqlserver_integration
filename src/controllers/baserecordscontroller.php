@@ -25,7 +25,7 @@ abstract class BaseRecordsController  {
 
     abstract public function deleteRecord($id);
 
-    function getModel(){
+    public function getModel(){
         return $this->BaseModel;
     }
 

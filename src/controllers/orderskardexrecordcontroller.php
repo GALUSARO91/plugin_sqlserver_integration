@@ -13,7 +13,7 @@ class OrdersKardexRecordController extends BaseRecordsController{
 
 
     function createRecord($id){
-        try{
+        // try{
             if(isset($id)){
                 // if($recordFound == ""){
                     $this->BaseModel->timestamps = false;
@@ -26,21 +26,21 @@ class OrdersKardexRecordController extends BaseRecordsController{
                 // } 
                 return true;
             }
-        } catch (\Exception $e){
-            return $e;
-        }
+        // } catch (\Exception $e){
+            // return $e;
+        // }
     }
 
     function retrieveRecord($id){
         // $remoteId = $this->calculateId($id);
-        try{
+        // try{
             if(isset($id)&& $id!=""){
                 $return = $this->BaseModel::where('NUM_REG',$id)->get();
                 return $return;
                 }
-        } catch(\Exception $e){
-            return $e;
-        }
+        // } catch(\Exception $e){
+            // return $e;
+        // }
     }
 
     function updateRecord($id)

@@ -24,7 +24,9 @@ require_once __DIR__ .'/src/includes/functions.php';
 require_once __DIR__ .'/src/includes/client-crud-functions.php';
 require_once __DIR__ .'/src/includes/product-crud-functions.php';
 require_once __DIR__ .'/src/includes/order-crud-functions.php';
-require_once __DIR__.'/src/includes/myaccountfunctions.php';
+require_once __DIR__ .'/src/includes/myaccountfunctions.php';
+
+// C:\Users\glsr9\Documents\gcmtransportes\html\wp-content\plugins\remotedbplugin\src\includes\order-crud-functions.php
 
 
 use Monolog\Logger;
@@ -66,7 +68,7 @@ function disable_autosave() {
   }
 
   //Link all actions to their respective hooks
-
+  add_action('pre_get_posts','retrieve_order_info',10,1);
   add_action('show_user_profile','remote_db_user_primary_key');
   add_action('edit_user_profile', 'remote_db_user_primary_key');
   add_action('show_user_profile','retrieve_user_info');
@@ -92,8 +94,8 @@ function disable_autosave() {
   add_action('before_delete_post','delete_product',10,1);
   add_action('pre_get_posts','retrieve_product_info',10,1);
   add_action('save_post','remote_order_creator',20,1);
-  add_action('pre_get_posts','retrieve_order_info',10,1);
   add_action('before_delete_post','delete_order',10,1);
+  
   // add_filter('woocommerce_product_data_store_cpt_get_products_query', 'handle_product_remote_id',5, 2 );
 
 } 

@@ -15,7 +15,7 @@ class OrdersTarjetaDesRecordController extends BaseRecordsController{
     function createRecord($id,$args = null){
         // $remoteId = $this->calculateNumReg($id);
         // $recordFound = $this->BaseModel::where('NUM_REG',$remoteId)->first()??"";
-        try{
+        // try{
             if(isset($args)){
                 // if($recordFound == ""){
                     $this->BaseModel->timestamps = false;
@@ -27,28 +27,28 @@ class OrdersTarjetaDesRecordController extends BaseRecordsController{
                     return true;
                 // } 
             }
-        } catch(\Exceptions $e){
-            return $e;
-        }
+        // } catch(\Exceptions $e){
+            // return $e;
+        // }
            
     }
 
     function retrieveRecord($id){
         // $remoteId = $this->calculateNumReg($id);
-            try{
+            // try{
             if(isset($id)&& $id!=""){
                 $return = $this->BaseModel::where('NUM_REG',$id)->first();
                 return $return;
                 }
-            } catch(\Exception $e){
-                return $e;
-            }
+            // } catch(\Exception $e){
+                // return $e;
+            // }
     }
 
     function updateRecord($id,$args = null)
     {
         // $remoteId = $this->calculateNumReg($id);
-        try{    
+        // try{    
             $recordFound = $this->BaseModel::where('NUM_REG',$id)->first()??"";
             if(isset($args)){
                 if($recordFound != "") {
@@ -60,9 +60,9 @@ class OrdersTarjetaDesRecordController extends BaseRecordsController{
                     $recordFound->save();
                 }
             }
-        }catch(\Exception $e){
-            return $e;
-        }
+        // }catch(\Exception $e){
+            // return $e;
+        // }
            
         
     }
