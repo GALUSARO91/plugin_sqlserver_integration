@@ -4,7 +4,7 @@ namespace ROOT\controllers;
 
 class OrdersKardexRecordController extends BaseRecordsController{
 
-    public $BaseModel;
+    private $BaseModel;
 
     function __construct($BaseModel){
 
@@ -24,7 +24,7 @@ class OrdersKardexRecordController extends BaseRecordsController{
                     $this->BaseModel->save();
                     // return $remoteId;
                 // } 
-                return true;
+                // return true;
             }
         // } catch (\Exception $e){
             // return $e;
@@ -50,13 +50,13 @@ class OrdersKardexRecordController extends BaseRecordsController{
 
     function deleteRecord($id)
     {
-        try{    
-            $remoteId = $this->calculateId($id);
-            $this->BaseModel::where('NUM_REG',$remoteId)->first()->delete();   
-            return true;
-        }catch(\Exception $e){
+        // try{    
+            // $remoteId = $this->calculateId($id);
+            $this->BaseModel::where('NUM_REG',$remoteId)->delete();   
+            // return true;
+    /*     }catch(\Exception $e){
             return $e;
-        }
+        } */
     }
 
     function calculateNumReg(string $id=null,string $remote_id=null)

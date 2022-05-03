@@ -13,7 +13,7 @@ class OrdersRecordController extends BaseRecordsController{
 
 
     function createRecord($id,$args = null){
-        try{
+        // try{
         // $post_data =get_post($id);
         $remoteId = $this->calculateId($id);
         $recordFound = $this->BaseModel::where('NUM_REG',$remoteId)->first()??"";
@@ -36,23 +36,23 @@ class OrdersRecordController extends BaseRecordsController{
                     $recordFound->save();
                 }
             }
-            return true;
+        /*     return true;
         } catch(\Exception $e){
             return $e;
-        }
+        } */
            
     }
 
     function retrieveRecord($id){
-        try{
+        // try{
         $remoteId = $this->calculateId($id);
         if(isset($remoteId)&& $remoteId!=""){
             $return = $this->BaseModel::where('NUM_REG',$remoteId)->first();
             return $return;
             }
-        } catch(\Exception $e){
-            return $e;
-        }
+        // } catch(\Exception $e){
+            // return $e;
+        // }
     }
 
     function updateRecord($id)
@@ -62,13 +62,13 @@ class OrdersRecordController extends BaseRecordsController{
 
     function deleteRecord($id)
     {
-        try{
+        // try{
             $remoteId = $this->calculateId($id);
             $this->BaseModel::where('NUM_REG',$remoteId)->first()->delete();   
             return true;
-        } catch(\Exception $e){
-            return $e;
-        }
+        // } catch(\Exception $e){
+            // return $e;
+        // }
     }
 
     function calculateId($id)

@@ -26,8 +26,6 @@ require_once __DIR__ .'/src/includes/product-crud-functions.php';
 require_once __DIR__ .'/src/includes/order-crud-functions.php';
 require_once __DIR__ .'/src/includes/myaccountfunctions.php';
 
-// C:\Users\glsr9\Documents\gcmtransportes\html\wp-content\plugins\remotedbplugin\src\includes\order-crud-functions.php
-
 
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;

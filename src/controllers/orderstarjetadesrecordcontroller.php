@@ -69,17 +69,15 @@ class OrdersTarjetaDesRecordController extends BaseRecordsController{
 
     function deleteRecord($id)
     {  // $remoteId = $this->calculateId($id);
-        try{
+        // try{
             if (isset($id)){
                 $model_found =$this->BaseModel::where('NUM_REG',$id)->first();
                 if(isset($model_found)){
                     $model_found->delete();
-                    return true;
+                    // return true;
                 }
             }
-        }catch(\Exception $e){
-            return $e;
-        }    
+      /* d */   
     }
 
     function calculateNumReg(string $id=null,string $remote_id=null)
