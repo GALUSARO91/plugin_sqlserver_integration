@@ -1,15 +1,9 @@
 <?php
 
 if ( ! defined( 'ABSPATH' ) ) exit;
-use ROOT\sshcontrollers\SSHHandler as SSH;
+use ROOT\sshcontrollers\sshhandler as SSH;
 use Illuminate\Database\Capsule\Manager as Capsule;
-
-function send_error_message($message = null){
-  
-  return '<div class="notice notice-success is-dismissible">
-  <p>'.$message??"an error occurred".'</p></div>';
-
-}
+Require_once './error-handler.php';
 
 function start_remote_db(){
   try{
@@ -28,20 +22,28 @@ function start_remote_db(){
   $capsule->setAsGlobal();
   $capsule->bootEloquent();
     } catch(\Exception $e){
-
-      add_action('admin_notices','send_error_message',1,10);
+          myErrorHandler($e);
+      
+    } catch (\Error $e){
+          myErrorHandler($e);
     }
   }
 
   function start_ssh(){
-    $ssh = new SSH(get_option('ssh_host'),get_option('ssh_user'),get_option('ssh_local_port'),get_option('ssh_remote_host'),get_option('ssh_remote_port'),get_option('ssh_connection_string'));    
+    $ssh = new SSH(
+                    get_option('ssh_host'),
+                    get_option('ssh_user'),
+                    get_option('ssh_local_port'),
+                    get_option('ssh_remote_host'),
+                    get_option('ssh_remote_port'),
+                    get_option('ssh_connection_string')
+                  );    
     $ssh->ssh_bridge();
     return $ssh;
 }
 
 
 function handle_product_remote_id($query, $query_vars){
-        // $test = $query_vars['gcm_id'];
     if ( ! empty( $query_vars['gcm_id'] ) ) {
       $query['meta_query'][] = array(
         'key' => 'gcm_id',

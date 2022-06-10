@@ -34,7 +34,6 @@
         }
 
         const navigator = (page = 0) =>{
-            // TODO: Navigator
             let pagesContainer = ""          
             let totalPages = Math.ceil(allrecords.records.length / $("#amountOfRecords").val());
             for (let i = 1; i<=totalPages;i++){

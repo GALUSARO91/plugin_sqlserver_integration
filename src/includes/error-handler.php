@@ -1,24 +1,20 @@
 <?php
 
-function myErrorHandler($e){
-    // TODO: Write error code here
-    $wp_error = new WP_Error();
-    $wp_error->add($e->getCode(),$e->getMessage());
-    add_action('add_meta_boxes','errorMessageBoxSetup',10,1);
+function myErrorHandler($e = null,$customMessage = null){
+    if(isset($e)){
+        $wp_error = new WP_Error();
+        $wp_error->add($e->getCode(),$e->getMessage());
+        error_log('Error No: '.$e->getCode().' Error Message: '.$e->getMessage());
+        add_action('wp_footer',function() use($customMessage){
+            error_message($customMessage);
+        },10,1);
+        add_action('admin_footer',function() use($customMessage){
+            error_message($customMessage);
+        },10,1);
+    }  
 }
 
-function errorMessageBoxSetup($message_to_show){
-    add_meta_box( 'remote-db-plugin-error-message', 
-    'Error', 
-    'errorMessageBox',
-    null,
-    'advanced',
-    'high',
-    [$message_to_show]);
-}
-
-function errorMessageBox($message_to_show){
-
-    echo $message_to_show;
-  
+function error_message($message = null){
+    $defaultMessage = $message??'No pudimos conectarnos con el sistema principal, por favor intente de nuevo. Si el problema persiste comuniquese con GCM Transportes directamente';
+    echo('<script type="text/javascript" id="error-alert">alert("'.$defaultMessage.'")</script>');
 }

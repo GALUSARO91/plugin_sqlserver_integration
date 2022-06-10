@@ -29,7 +29,7 @@ function transaction_history_records($user = null){
     wp_register_style('transaction-history-style',plugins_url('/css/transaction-history.css',__FILE__ ),array(),null,'all');
     $link = $_SERVER['REQUEST_URI'];
     if($link=="/mi-cuenta/transaction-history/"){
-        $columnsToPrint =array('PLAZO','COSTO','DESCUENTO','SUBTOTAL','IGV','IEC','VALOR');
+        $columnsToPrint =array('FECHA','NUM_DOC','SALDO','PLAZO','VENCE','LIMITE'); //FIXME: This is hardcoded
         $found_id = $user==null?get_current_user_id():$user->ID;
         $records = get_user_meta($found_id,'all_transactions',true); 
         if(is_array($records)){

@@ -7,7 +7,7 @@
 namespace ROOT\models;
 use Illuminate\Database\Eloquent\Model;
 
-class CotizacionKardexModel extends Model{
+class cotizacionkardexmodel extends Model{
     
     protected $table = 'Cotizacion Tarjeta de Kardex';
 

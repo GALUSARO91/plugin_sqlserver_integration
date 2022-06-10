@@ -3,7 +3,7 @@ namespace ROOT\controllers;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
-class ClientsRecordController extends BaseRecordsController{
+class clientsrecordcontroller extends baserecordscontroller{
 
     private $BaseModel;
 

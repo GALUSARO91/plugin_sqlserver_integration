@@ -2,7 +2,7 @@
 
 namespace ROOT\controllers;
 
-class OrdersTarjetaDesRecordController extends BaseRecordsController{
+class orderstarjetadesrecordcontroller extends baserecordscontroller{
 
     private $BaseModel;
 

@@ -1,7 +1,9 @@
 <?php
 namespace ROOT\controllers;
 
-class ClientsDestinyController extends BaseRecordsController{
+use ROOT\controllers\baserecordscontroller;
+
+class clientsdestinycontroller extends baserecordscontroller{
 
     private $BaseModel;
 
@@ -41,9 +43,15 @@ class ClientsDestinyController extends BaseRecordsController{
 
     }
 
-    public function deleteRecord($id)
+    public function deleteRecord($id,$args = null)
     {
-
+        // TODO: Create function to delete destiny
+        if(isset($args)){
+            // array_push($args,['Desactivar' => true]);
+            $args['Desactivar'] = true;
+            $this->BaseModel->upsert($args,['COD_ID','Direccion'],['Desactivar']);
+        }
+            
     }
     
 

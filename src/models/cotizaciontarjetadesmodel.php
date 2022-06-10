@@ -7,7 +7,7 @@
 namespace ROOT\models;
 use Illuminate\Database\Eloquent\Model;
 
-class CotizacionTarjetaDesModel extends Model{
+class cotizaciontarjetadesmodel extends Model{
     
     protected $table = 'Cotizacion Tarj Desc Doc';
 

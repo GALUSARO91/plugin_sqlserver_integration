@@ -7,7 +7,7 @@
 namespace ROOT\models;
 use Illuminate\Database\Eloquent\Model;
 
-class FactVentasModel extends Model{
+class factventasmodel extends Model{
     
     protected $table = 'Facturacion Ventas';
 

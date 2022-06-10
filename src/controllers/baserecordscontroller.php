@@ -6,7 +6,7 @@
 namespace ROOT\controllers;
 use ROOT\traits\remotedbpluginerrorhandler;
 
-abstract class BaseRecordsController  {
+abstract class baserecordscontroller  {
     // use remotedbpluginerrorhandler;
 
     private $BaseModel;

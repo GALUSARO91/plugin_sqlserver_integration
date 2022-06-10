@@ -3,24 +3,24 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
-use ROOT\controllers\OrdersRecordController;
-use ROOT\controllers\OrdersTarjetaDesRecordController;
-use ROOT\models\FactVentasModel;
-use ROOT\models\CotizacionModel;
-use ROOT\models\CotizacionTarjetaDesModel;
-use ROOT\controllers\OrdersKardexRecordController;
-use ROOT\models\CotizacionKardexModel;
-use ROOT\models\ProductModel;
-use ROOT\controllers\ProductsRecordController;
-use ROOT\controllers\ClientsRecordController;
-use ROOT\models\ClientsDestinyModel;
-use ROOT\controllers\ClientsDestinyController;
+use ROOT\controllers\ordersrecordcontroller;
+use ROOT\controllers\orderstarjetadesrecordcontroller;
+use ROOT\models\factventasmodel;
+use ROOT\models\cotizacionmodel;
+use ROOT\models\cotizaciontarjetadesmodel;
+use ROOT\controllers\orderskardexrecordcontroller;
+use ROOT\models\cotizacionkardexmodel;
+use ROOT\models\productmodel;
+use ROOT\controllers\productsrecordcontroller;
+use ROOT\controllers\clientsrecordcontroller;
+use ROOT\models\clientsdestinymodel;
+use ROOT\controllers\clientsdestinycontroller;
 
 include_once __DIR__.'/error-handler.php';
 
 $log = new Logger('app');
 $log->pushHandler(new StreamHandler(__DIR__.'/logs/app.log', Logger::DEBUG));
-// Agregar punto de entrega - Direccion de destino
+
 function remote_order_creator($id){ 
     try{
         $post_data =get_post($id);
@@ -32,11 +32,8 @@ function remote_order_creator($id){
             start_remote_db();
             $order_num_meta = get_post_meta($post_data->ID,'order_num',true)??'';
             $client_id = $order->get_user()->get('remote-db-user-primary-key');
-            // $first_name = $order->get_user()->get('user_firstname');
-            // $last_name =($order->get_user()->get('user_lastname')!==false && $order->get_user()->get('user_lastname')!=="")?" ".$order->get_user()->get('user_lastname'):'';
-            // $name = $first_name.$last_name;
             $name = $order->get_user()->get('user_login');
-            $myorder = new OrdersTarjetaDesRecordController(new CotizacionTarjetaDesModel());
+            $myorder = new orderstarjetadesrecordcontroller(new cotizaciontarjetadesmodel());
             $order_num = $myorder->calculateNumReg($order_num_meta);
             $args =[
                 "Cod_Emp"=>"01",
@@ -52,14 +49,14 @@ function remote_order_creator($id){
                 "TIPO_CAMB"=>35.5
             ];
             $prod_items = [];
-            $myOrder_items_controller = new OrdersKardexRecordController(new CotizacionKardexModel());
+            $myOrder_items_controller = new orderskardexrecordcontroller(new cotizacionkardexmodel());
             $wc_order_items = $order->get_items();
             foreach ($wc_order_items as $item_id => $item) {
-                $remote_product_controller = new ProductsRecordController(new ProductModel());
+                $remote_product_controller = new productsrecordcontroller(new productmodel());
                 $item_prod = $item->get_product();
                 $COD_PROD = $item_prod->get_attribute('ID_GCM');
                 $remote_product_info = $remote_product_controller->retrieveRecord($COD_PROD);
-                $destiny_address_source = new ClientsDestinyController(new ClientsDestinyModel());
+                $destiny_address_source = new clientsdestinycontroller(new clientsdestinymodel());
                 $destiny_address_info = $destiny_address_source->retrieveRecord($client_id)->toArray();
                 $destiny_values = array_values(array_filter($destiny_address_info,function($destiny)use($order){
                     $string1 = trim($destiny['Direccion']);
@@ -74,7 +71,6 @@ function remote_order_creator($id){
                 $valor += (float)$destiny_values[0]['FLETE']??0;
                 $valor += (float)$destiny_values[0][$COD_PROD.'_COM_EMP']??0;
                 $valor += (float)$destiny_values[0][$COD_PROD.'_COM_VEND']??0;
-                $valor += (float)$destiny_values[0]['COM_PUMA'];
                 $item_args = [
                     'NUM_REG'=> $order_num_meta!=''?$order_num_meta:$order_num,
                     'COD_SUC' => 0,
@@ -93,25 +89,21 @@ function remote_order_creator($id){
             if($order_num_meta == ''){
                 $myorder->createRecord($order_num,$args);
                 update_post_meta($post_data->ID,'order_num', $order_num);
-                // $myOrder_items_controller->BaseModel->upsert($prod_items,['NUM_REG','COD_PROD'],['CANTIDAD','VALOR','COSTO','DESC_TARJ','COD_SUC','NUM_LIN','Cod_Prec','Unidades','TIPO_ITEM']);       
-                // $myOrder_items_model = new CotizacionKardexModel();
                 create_remote_order_items($prod_items,$myOrder_items_controller);
-                // $myOrder_items_controller->
                 } else {
                     $myorder->updateRecord($order_num_meta,$args);
-                    // $myOrder_items_model = new CotizacionKardexModel();
-                    // $myOrder_items_model::where('NUM_REG',$order_num_meta)->delete();
                     $myOrder_items_controller->deleteRecod($order_num_meta);
-                    
-                    // $myOrder_items_controller->BaseModel->upsert($prod_items,['NUM_REG','COD_PROD'],['CANTIDAD','VALOR','COSTO','DESC_TARJ','COD_SUC','NUM_LIN','Cod_Prec','Unidades','TIPO_ITEM']);
                     create_remote_order_items($prod_items,$myOrder_items_controller);
                 }
                     $ssh->ssh_bridge_close();
+                    
             }
         }
-    }catch(\Exception $e){
-        myErrorHandler($e);
-    }    
+        }catch(\Error $e){
+            myErrorHandler($e);
+        }catch(\Exception $e){
+            myErrorHandler($e);
+        }    
 }
 
  function retrieve_order_info ($post_query = null){
@@ -122,10 +114,9 @@ function remote_order_creator($id){
             $order_num_meta = get_post_meta($post,'order_num',true)??'';
             $ssh = start_ssh();
             start_remote_db();
-            $myorder = new OrdersTarjetaDesRecordController(new CotizacionTarjetaDesModel());
-            $myorder_items = new OrdersKardexRecordController(new CotizacionKardexModel());
+            $myorder = new orderstarjetadesrecordcontroller(new cotizaciontarjetadesmodel());
+            $myorder_items = new orderskardexrecordcontroller(new cotizacionkardexmodel());
             if($order_num_meta!==''){
-                /*$orderinfo = $myorder->retrieveRecord($order_num_meta)??'';*/
                 $wc_order = new  WC_Order($post);
                 $order_items = $wc_order->get_items( array('line_item', 'fee', 'shipping') );
                 $remote_order_items = $myorder_items->retrieveRecord($order_num_meta)->toArray()??'';
@@ -140,7 +131,6 @@ function remote_order_creator($id){
                         'return' => 'objects',
                         'limit' => -1,
                     ));
-                    /*$products_found = wc_get_products();*/
                     $products_found = $product_query->get_products();
                     $product = find_product_from_remote_info($products_found,$remote_prod_id);
                     $order_item_args = [
@@ -157,36 +147,32 @@ function remote_order_creator($id){
             }
             $ssh->ssh_bridge_close();
         } 
+    }catch(\Error $e){
+        myErrorHandler($e);
     }catch(\Exception $e){
         myErrorHandler($e);
-    }
+    } 
 }
 
-/*
-function update_user($order =null){
-
-  
-}
-*/
 function delete_order($order =null){
     try{
         if(isset($order)){
             $order_num = get_post_meta($order,'order_num',true)??'';
             $ssh = start_ssh();
             start_remote_db();
-            $myorder = new OrdersTarjetaDesRecordController(new CotizacionTarjetaDesModel());
-            $myOrder_items_controller = new OrdersKardexRecordController(new CotizacionKardexModel());
+            $myorder = new orderstarjetadesrecordcontroller(new cotizaciontarjetadesmodel());
+            $myOrder_items_controller = new orderskardexrecordcontroller(new cotizacionkardexmodel());
             if($order_num!=''){
                 $myorder->deleteRecord($order_num);
-                // $myOrder_items_model = new CotizacionKardexModel();
-                // $myOrder_items_model::where('NUM_REG',$order_num)->delete();
                 $myOrder_items_controller->deleteRecord($order_num);
             }
             $ssh->ssh_bridge_close();
         }
-    }catch(\Exception $e){
+    }catch(\Error $e){
         myErrorHandler($e);
-    }
+    }catch(\Exception $e){
+      myErrorHandler($e);
+    } 
 }
  
 function create_remote_order_items($args,$controller){

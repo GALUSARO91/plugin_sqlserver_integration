@@ -3,7 +3,7 @@
 namespace ROOT\models;
 use Illuminate\Database\Eloquent\Model;
 
-class ProductModel extends Model{
+class productmodel extends Model{
     
     protected $table = 'Facturacion Productos';
 

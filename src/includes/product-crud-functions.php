@@ -25,21 +25,21 @@ function remote_product_creator($product = null){
           "U_MEDIDA" => 2,
           "COD_IMP" => 2,
           "NOM_PROD" => $post_data->post_title,
-          // "PRECIO_BASE" => get_post_meta($product,'_regular_price',true),
           "LIQUIDADO" => "N"
         ];
         $myproduct = new ProductsRecordController(new ProductModel());
         $myproduct->createRecord($remoteId,$args);
         $ssh->ssh_bridge_close();
+    }catch(\Error $e){
+        myErrorHandler($e);
     }catch(\Exception $e){
         myErrorHandler($e);
-    }
+  } 
 };
 
 function retrieve_product_info($post_query =null){
     try{
         global $wpdb;
-            // $test = $_REQUEST;
         $type = isset($post_query->query['post_type'])?$post_query->query['post_type']:null;
         if($type =="product"){
           $ssh = start_ssh();
@@ -47,11 +47,6 @@ function retrieve_product_info($post_query =null){
           $myproduct = new ProductsRecordController(new ProductModel());
           $name = isset($post_query->query['name'])?$post_query->query['name']:null;
           $product =$wpdb->get_var($wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE post_name = %s AND post_type='$type'",$name));
-          // $product = get_page_by_path("/tienda/$name/", OBJECT, $type);
-    /*       $product = new WP_Query([
-            "post_type" => $type,
-            "name" => $name
-          ]); */
           $prod_attributes = get_post_meta($product,'_product_attributes',true)??"";
           $remoteId = ($prod_attributes != "" and $prod_attributes['id_gcm']['value'] != false) ? $prod_attributes['id_gcm']['value']:"";
           $remoteProductInfo = $myproduct->retrieveRecord($remoteId);
@@ -69,9 +64,11 @@ function retrieve_product_info($post_query =null){
           // update_post_meta($product->ID,"_price",$remoteProductInfo->PRECIO_VTA);
         }
       }
+    }catch(\Error $e){
+        myErrorHandler($e);
     }catch(\Exception $e){
-      myErrorHandler($e);
-    }
+        myErrorHandler($e);
+  } 
     
 }
 
@@ -87,8 +84,10 @@ function delete_product($product=null){
       }
       $ssh->ssh_bridge_close();
 
+    }catch(\Error $e){
+        myErrorHandler($e);
     }catch(\Exception $e){
-      myErrorHandler($e);
-  }
+        myErrorHandler($e);
+  } 
 }
 

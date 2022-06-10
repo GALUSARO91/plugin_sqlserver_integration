@@ -3,12 +3,13 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
-use ROOT\controllers\ClientsRecordController;
+use ROOT\controllers\clientsrecordcontroller;
 use ROOT\controllers\ClientsDestinyController;
-use ROOT\models\ClientModel;
-use ROOT\models\ClientsDestinyModel;
-use ROOT\models\ClientFactModel;
-use ROOT\models\FactVentasModel;
+use ROOT\models\clientmodel;
+use ROOT\models\clientsdestinymodel;
+use ROOT\models\clientfactmodel;
+use ROOT\models\factventasmodel;
+use ROOT\models\carteramodel;
 
 include_once __DIR__.'/error-handler.php';
 
@@ -20,7 +21,7 @@ function remote_user_creator($id){
     if(!isset($_POST['user-in-db'])){
       $ssh = start_ssh();
       start_remote_db();
-      $client = new ClientsRecordController(new ClientModel());
+      $client = new clientsrecordcontroller(new clientmodel());
       $args = [
         "Cod_Emp" => "01",
         "COD_SUC" => "01",
@@ -28,19 +29,26 @@ function remote_user_creator($id){
         "NOMBRE" => $_POST['first_name']." ".$_POST['last_name'],
         "EMAIL" => $_POST['email'],
         "CUENTA" => '1103-01-01',
+        'NUM_RUC' => $_POST['NUM_RUC'],
+        'PLAZO' => $_POST['PLAZO'],
+        'LIMITE' => $_POST['LIMITE'],
       ];
-      // TODO: Add Ruc, limite de credito, plazo
       $client_id = $client->createRecord($_POST['remote-db-user-primary-key'],$args);
       update_user_meta($id,'remote-db-user-primary-key',$client_id);
+      update_user_meta( $id,'NUM_RUC', $_POST['NUM_RUC']);
+      update_user_meta( $id,'PLAZO', $_POST['PLAZO']);
+      update_user_meta( $id,'LIMITE', $_POST['LIMITE']);
       $ssh->ssh_bridge_close();
     }
   }
 /*   if (isset($_POST['remote-db-user-primary-key'])){
     update_user_meta($id,'remote-db-user-primary-key',$_POST['remote-db-user-primary-key']);
   } */
-  catch(\Exception $e){
+  catch(\Error $e){
       myErrorHandler($e);
-  }
+  }catch(\Exception $e){
+      myErrorHandler($e);
+} 
 };
 
 function retrieve_user_info($user =null){
@@ -49,20 +57,13 @@ function retrieve_user_info($user =null){
       $allTransactions = [];
       $ssh = start_ssh();
       start_remote_db();
-      $client = new ClientsRecordController(new ClientModel());
+      $client = new clientsrecordcontroller(new clientmodel());
       $user_id = $user!=null?$user->ID:get_current_user_id();
       $found_id = get_user_meta($user_id,'remote-db-user-primary-key',true);
       $client_info = $client->retrieveRecord($found_id);
       if(isset($client_info)){ 
-        $transactions_model = $client_info->hasManyThrough(
-          FactVentasModel::class,
-          ClientFactModel::class,
-          'COD_ID',
-          'NUM_REG',
-          'COD_ID',
-          'NUM_REG'
-        );
-        $transactionRecords = $transactions_model->where('COD_ID',$found_id)->get();//FIXME: change this to the new view Esteban made
+        $transactions_model = new carteramodel();
+        $transactionRecords = $transactions_model->where('COD_ID',$found_id)->get();
       foreach($transactionRecords as $record){
           array_push($allTransactions,$record->toArray());
       }
@@ -70,11 +71,10 @@ function retrieve_user_info($user =null){
       update_user_meta($user == null ?get_current_user_id():$user->ID,'billing_city',$client_info->CIUDAD);
       update_user_meta($user == null ?get_current_user_id():$user->ID,'billing_phone',$client_info->TELEFONO_1);
       update_user_meta($user == null ?get_current_user_id():$user->ID,'credit_limit',$client_info->LIMITE);
-      // update_user_meta($user == null ?get_current_user_id():$user->ID,'daily_limit',$client_info->LIMITE_D);
       update_user_meta($user == null ?get_current_user_id():$user->ID,'billing_first_name',$client_info->CONTACTO_1);
       update_user_meta($user == null ?get_current_user_id():$user->ID,'all_transactions',$allTransactions);
 
-      $destiny_address_source = new ClientsDestinyController(new ClientsDestinyModel());
+      $destiny_address_source = new ClientsDestinyController(new clientsdestinymodel());
       $destiny_address_results = $destiny_address_source->retrieveRecord($found_id)->toArray();
       $destiny_table=$wpdb->prefix.'ocwma_billingadress';
       $billing_addresses = $wpdb->get_results("SELECT * FROM {$destiny_table} WHERE type='billing' AND userid={$user_id}");
@@ -82,9 +82,11 @@ function retrieve_user_info($user =null){
     }
       $ssh->ssh_bridge_close();
 
+  }catch(\Error $e){
+      myErrorHandler($e);
   }catch(\Exception $e){
       myErrorHandler($e);
-  }
+  } 
 }
 
 
@@ -93,7 +95,7 @@ function update_user($user =null){
     global $wpdb;
     $ssh = start_ssh();
     start_remote_db();
-    $client = new ClientsRecordController(new ClientModel());
+    $client = new clientsrecordcontroller(new clientmodel());
     $remoteId = $user==null?get_user_meta(get_current_user_id(),'remote-db-user-primary-key'):get_user_meta($user,'remote-db-user-primary-key',true);
     $args=[
       'timestamps' => false,
@@ -102,35 +104,62 @@ function update_user($user =null){
       'CIUDAD'=> $_POST['billing_city'],
       'TELEFONO_1'=>$_POST['billing_phone'],
       'EMAIL'=>$_POST['email'],
+      'NUM_RUC' => $_POST['NUM_RUC'],
+      'PLAZO' => $_POST['PLAZO'],
+      'LIMITE' => $_POST['LIMITE'],
     ];
-
     $client->updateRecord($remoteId,$args);
-    $destiny_address_source = new ClientsDestinyController(new ClientsDestinyModel());
+    $destiny_address_source = new ClientsDestinyController(new clientsdestinymodel());
     $destiny_address_results = $destiny_address_source->retrieveRecord($remoteId)->toArray();
     $destiny_table=$wpdb->prefix.'ocwma_billingadress';
     $billing_addresses = $wpdb->get_results("SELECT * FROM {$destiny_table} WHERE type='billing' AND userid={$user}");
     crosscheck_addresess($destiny_address_results,$billing_addresses,$destiny_address_source,true);
     $ssh->ssh_bridge_close();
-
+  }catch(\Error $e){
+      myErrorHandler($e);
   }catch(\Exception $e){
-    myErrorHandler($e);
-  }
+      myErrorHandler($e);
+  } 
   
 }
 
 function delete_user($user =null){
-
   try{
-    $ssh = start_ssh();
-    start_remote_db();
-    $client = new ClientsRecordController(new ClientModel());
-    $remoteId = $user==null?get_user_meta(get_current_user_id(),'remote-db-user-primary-key'):get_user_meta($user,'remote-db-user-primary-key',true);
-    $client->deleteRecord($remoteId);
-    $ssh->ssh_bridge_close();
+      $ssh = start_ssh();
+      start_remote_db();
+      $client = new clientsrecordcontroller(new clientmodel());
+      $remoteId = $user==null?get_user_meta(get_current_user_id(),'remote-db-user-primary-key'):get_user_meta($user,'remote-db-user-primary-key',true);
+      $client->deleteRecord($remoteId);
+      $ssh->ssh_bridge_close();
+  }catch(\Error $e){
+      myErrorHandler($e);
   }catch(\Exception $e){
-    myErrorHandler($e);
-  }
+      myErrorHandler($e);
+  } 
   
+}
+
+function delete_user_destiny(){
+  global $wpdb;
+  $destiny_table=$wpdb->prefix.'ocwma_billingadress';
+
+        if( isset($_REQUEST['action']) && $_REQUEST['action']=="delete_ocma"){
+
+            $destiny_id = sanitize_text_field($_REQUEST['did']);
+            $destiny = $wpdb->get_results("SELECT * FROM {$destiny_table} where id = '{$destiny_id}'"); //FIXME: returns and array instead of a value
+            $user_id = $destiny[0]->userid;
+            $remote_db_user_id = get_user_meta($user_id,'remote-db-user-primary-key',true); 
+            $unserialized_address_data = unserialize($destiny[0]->userdata); //FIXME: Data is within an array
+            $destiny_args = [
+              'COD_ID' => $remote_db_user_id,
+              "Direccion" =>$unserialized_address_data['billing_address_1']
+            ];
+            $ssh = start_ssh();
+            start_remote_db();
+            $destiny_address_source = new ClientsDestinyController(new clientsdestinymodel());
+            $destiny_address_source->deleteRecord($destiny_args['COD_ID'],$destiny_args);
+            $ssh->ssh_bridge_close();
+        }
 }
 
 function crosscheck_addresess($remote_addresses,$local_addresses,$remote_queryobject,$update){
@@ -155,7 +184,6 @@ function crosscheck_addresess($remote_addresses,$local_addresses,$remote_queryob
               array_push($missing_address,array(
                     "COD_ID" => get_user_meta($local_address->userid,'remote-db-user-primary-key',true),
                     "Direccion" =>$unserialized_data['billing_address_1'],
-                    // "REM_ID" =>$local_address->id
               ));
             }
           }
@@ -227,7 +255,6 @@ function crosscheck_addresess($remote_addresses,$local_addresses,$remote_queryob
             array_push($missing_address,$address_data); 
           }
         }
-        
         array_walk($missing_address,function($address){
           global $wpdb;
           $table = $wpdb->prefix.'ocwma_billingadress';
@@ -235,9 +262,11 @@ function crosscheck_addresess($remote_addresses,$local_addresses,$remote_queryob
         });
       break;
     }
+  }catch(\Error $e){
+        myErrorHandler($e);
   }catch(\Exception $e){
-    myErrorHandler($e);
-  }
+        myErrorHandler($e);
+  }  
 
 }
 

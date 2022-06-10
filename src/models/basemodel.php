@@ -7,7 +7,7 @@
 namespace ROOT\models;
 use Illuminate\Database\Eloquent\Model;
 
-class BaseModel extends Model{
+class basemodel extends Model{
     protected $table;
 
     function set_table(string $table)

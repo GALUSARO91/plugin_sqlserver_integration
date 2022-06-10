@@ -2,7 +2,7 @@
 namespace ROOT\controllers;
 
 
-class ProductsRecordController extends BaseRecordsController{
+class productsrecordcontroller extends baserecordscontroller{
 
     private $BaseModel;
 

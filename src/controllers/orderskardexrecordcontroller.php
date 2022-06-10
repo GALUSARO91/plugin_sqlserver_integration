@@ -2,7 +2,7 @@
 
 namespace ROOT\controllers;
 
-class OrdersKardexRecordController extends BaseRecordsController{
+class orderskardexrecordcontroller extends baserecordscontroller{
 
     private $BaseModel;
 
