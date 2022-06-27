@@ -15,6 +15,7 @@ use ROOT\controllers\productsrecordcontroller;
 use ROOT\controllers\clientsrecordcontroller;
 use ROOT\models\clientsdestinymodel;
 use ROOT\controllers\clientsdestinycontroller;
+use ROOT\models\exchangeratemodel;
 
 include_once __DIR__.'/error-handler.php';
 
@@ -35,18 +36,23 @@ function remote_order_creator($id){
             $name = $order->get_user()->get('user_login');
             $myorder = new orderstarjetadesrecordcontroller(new cotizaciontarjetadesmodel());
             $order_num = $myorder->calculateNumReg($order_num_meta);
+            $order_date_created = $order->get_date_created();
+            $camdollar_table = new exchangeratemodel();
+            $exchange_rate = $camdollar_table->whereDate('FECHA',$order_date_created)->firstOr(function(){
+                return "35.5";
+            });
             $args =[
                 "Cod_Emp"=>"01",
                 "COD_SUC"=>"01",
                 "COD_DIA"=>"ORD-1",
                 "TIP_DOC"=>36,
                 "COD_ID" => $client_id,
-                "FECHA"=>date('Y-m-d').'T00:00:00.000',
-                "HORA"=>date("H:i:s").".000",
+                "FECHA"=>date_format($order_date_created,"Y-m-d")."T".date_format($order_date_created,"H:i:s"),
+                "HORA"=>date_format($order_date_created,"H:i:s"),
                 "DESC_DOC" => $name,
                 "COD_US"=>"SCM",
                 "NUM_DOC"=>$myorder->set_num_doc(),
-                "TIPO_CAMB"=>35.5
+                "TIPO_CAMB"=>$exchange_rate
             ];
             $prod_items = [];
             $myOrder_items_controller = new orderskardexrecordcontroller(new cotizacionkardexmodel());

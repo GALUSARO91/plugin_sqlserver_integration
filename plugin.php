@@ -30,6 +30,7 @@ require_once __DIR__ .'/src/includes/myaccountfunctions.php';
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
+date_default_timezone_set('America/Managua');
 
 //initiallize logger
 $log = new Logger('app');

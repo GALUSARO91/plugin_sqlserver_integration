@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use ROOT\controllers\clientsrecordcontroller;
-use ROOT\controllers\ClientsDestinyController;
+use ROOT\controllers\clientsdestinycontroller;
 use ROOT\models\clientmodel;
 use ROOT\models\clientsdestinymodel;
 use ROOT\models\clientfactmodel;
@@ -74,7 +74,7 @@ function retrieve_user_info($user =null){
       update_user_meta($user == null ?get_current_user_id():$user->ID,'billing_first_name',$client_info->CONTACTO_1);
       update_user_meta($user == null ?get_current_user_id():$user->ID,'all_transactions',$allTransactions);
 
-      $destiny_address_source = new ClientsDestinyController(new clientsdestinymodel());
+      $destiny_address_source = new clientsdestinycontroller(new clientsdestinymodel());
       $destiny_address_results = $destiny_address_source->retrieveRecord($found_id)->toArray();
       $destiny_table=$wpdb->prefix.'ocwma_billingadress';
       $billing_addresses = $wpdb->get_results("SELECT * FROM {$destiny_table} WHERE type='billing' AND userid={$user_id}");
@@ -97,6 +97,9 @@ function update_user($user =null){
     start_remote_db();
     $client = new clientsrecordcontroller(new clientmodel());
     $remoteId = $user==null?get_user_meta(get_current_user_id(),'remote-db-user-primary-key'):get_user_meta($user,'remote-db-user-primary-key',true);
+    update_user_meta( $user,'NUM_RUC', $_POST['NUM_RUC']);
+    update_user_meta( $user,'PLAZO', $_POST['PLAZO']);
+    update_user_meta( $user,'LIMITE', $_POST['LIMITE']);
     $args=[
       'timestamps' => false,
       'NOMBRE'=>  $_POST['first_name']." ".$_POST['last_name'],
@@ -109,7 +112,7 @@ function update_user($user =null){
       'LIMITE' => $_POST['LIMITE'],
     ];
     $client->updateRecord($remoteId,$args);
-    $destiny_address_source = new ClientsDestinyController(new clientsdestinymodel());
+    $destiny_address_source = new clientsdestinycontroller(new clientsdestinymodel());
     $destiny_address_results = $destiny_address_source->retrieveRecord($remoteId)->toArray();
     $destiny_table=$wpdb->prefix.'ocwma_billingadress';
     $billing_addresses = $wpdb->get_results("SELECT * FROM {$destiny_table} WHERE type='billing' AND userid={$user}");
@@ -156,7 +159,7 @@ function delete_user_destiny(){
             ];
             $ssh = start_ssh();
             start_remote_db();
-            $destiny_address_source = new ClientsDestinyController(new clientsdestinymodel());
+            $destiny_address_source = new clientsdestinycontroller(new clientsdestinymodel());
             $destiny_address_source->deleteRecord($destiny_args['COD_ID'],$destiny_args);
             $ssh->ssh_bridge_close();
         }

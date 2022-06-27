@@ -3,7 +3,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 use ROOT\sshcontrollers\sshhandler as SSH;
 use Illuminate\Database\Capsule\Manager as Capsule;
-Require_once './error-handler.php';
+Require_once 'error-handler.php';
 
 function start_remote_db(){
   try{

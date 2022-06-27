@@ -64,7 +64,7 @@ function remote_db_user_primary_key( $user ){
                 </td>
                 <td>
                 <?php
-                $value = !is_string($user)?esc_attr(get_user_meta($user->ID, 'PLAZO', true )):'';
+                $value = !is_string($user)?esc_attr(get_user_meta($user->ID, 'LIMITE', true )):'';
                 ?>
                     <label for="LIMITE">Limite de Credito</label>
                     <input type="number" class="regular-text ltr" id="limite" name="LIMITE" <?php 

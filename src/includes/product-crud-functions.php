@@ -3,8 +3,8 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
-use ROOT\models\ProductModel;
-use ROOT\controllers\ProductsRecordController;
+use ROOT\models\productmodel;
+use ROOT\controllers\productsrecordcontroller;
 
 
 $log = new Logger('app');
@@ -27,7 +27,7 @@ function remote_product_creator($product = null){
           "NOM_PROD" => $post_data->post_title,
           "LIQUIDADO" => "N"
         ];
-        $myproduct = new ProductsRecordController(new ProductModel());
+        $myproduct = new productsrecordcontroller(new productmodel());
         $myproduct->createRecord($remoteId,$args);
         $ssh->ssh_bridge_close();
     }catch(\Error $e){
@@ -44,7 +44,7 @@ function retrieve_product_info($post_query =null){
         if($type =="product"){
           $ssh = start_ssh();
           start_remote_db();
-          $myproduct = new ProductsRecordController(new ProductModel());
+          $myproduct = new productsrecordcontroller(new productmodel());
           $name = isset($post_query->query['name'])?$post_query->query['name']:null;
           $product =$wpdb->get_var($wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE post_name = %s AND post_type='$type'",$name));
           $prod_attributes = get_post_meta($product,'_product_attributes',true)??"";
@@ -78,7 +78,7 @@ function delete_product($product=null){
       start_remote_db();
       $prod_attributes = get_post_meta($product,'_product_attributes',true)??"";
       $remoteId = ($prod_attributes != "" and $prod_attributes['id_gcm']['value'] != false) ? $prod_attributes['id_gcm']['value']:"";
-      $product = new ProductsRecordController(new ProductModel());
+      $product = new productsrecordcontroller(new productmodel());
       if($remoteId !=""){
         $product->deleteRecord($remoteId);
       }
