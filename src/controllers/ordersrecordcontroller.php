@@ -1,4 +1,7 @@
 <?php
+/* 
+    Handles CRUD for orders main table
+*/
 
 namespace ROOT\controllers;
 
@@ -13,12 +16,9 @@ class ordersrecordcontroller extends baserecordscontroller{
 
 
     function createRecord($id,$args = null){
-        // try{
-        // $post_data =get_post($id);
+    
         $remoteId = $this->calculateId($id);
         $recordFound = $this->BaseModel::where('NUM_REG',$remoteId)->first()??"";
-        // $order = wc_get_orders($id);
-        // $total = $order[0]->data["total"];
             if(isset($args)){
                 if($recordFound == ""){
                     $this->BaseModel->timestamps = false;
@@ -36,23 +36,18 @@ class ordersrecordcontroller extends baserecordscontroller{
                     $recordFound->save();
                 }
             }
-        /*     return true;
-        } catch(\Exception $e){
-            return $e;
-        } */
+
            
     }
 
     function retrieveRecord($id){
-        // try{
+       
         $remoteId = $this->calculateId($id);
         if(isset($remoteId)&& $remoteId!=""){
             $return = $this->BaseModel::where('NUM_REG',$remoteId)->first();
             return $return;
             }
-        // } catch(\Exception $e){
-            // return $e;
-        // }
+
     }
 
     function updateRecord($id)
@@ -62,13 +57,10 @@ class ordersrecordcontroller extends baserecordscontroller{
 
     function deleteRecord($id)
     {
-        // try{
             $remoteId = $this->calculateId($id);
             $this->BaseModel::where('NUM_REG',$remoteId)->first()->delete();   
             return true;
-        // } catch(\Exception $e){
-            // return $e;
-        // }
+  
     }
 
     function calculateId($id)

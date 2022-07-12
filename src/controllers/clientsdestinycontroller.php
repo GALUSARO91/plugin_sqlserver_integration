@@ -1,4 +1,9 @@
 <?php
+/** 
+ * CRUD for client´s destiny records on remote db
+ * */ 
+ 
+
 namespace ROOT\controllers;
 
 use ROOT\controllers\baserecordscontroller;
@@ -36,8 +41,6 @@ class clientsdestinycontroller extends baserecordscontroller{
             }
         }
         catch(\Exception $e){
-            // remoteDBPluginErrorHandler($e->code,$e->message);
-            // $wp_error = new WP_Error($e->getCode(),$e->getMessage());
             return $e;
         }
 
@@ -45,7 +48,6 @@ class clientsdestinycontroller extends baserecordscontroller{
 
     public function deleteRecord($id,$args = null)
     {
-        // TODO: Create function to delete destiny
         if(isset($args)){
             // array_push($args,['Desactivar' => true]);
             $args['Desactivar'] = true;

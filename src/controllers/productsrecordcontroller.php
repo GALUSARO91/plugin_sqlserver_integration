@@ -1,4 +1,8 @@
 <?php
+
+/* 
+    *CRUD to handle product records on remote db
+*/
 namespace ROOT\controllers;
 
 

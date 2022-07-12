@@ -1,7 +1,9 @@
 <?php
 
 /*
-    Enlace a la tabla clientes
+    Link to "Cotizacion Tarj Desc Doc"
+    This table has the main info of the orders
+    that are shipped
 */
 
 namespace ROOT\models;

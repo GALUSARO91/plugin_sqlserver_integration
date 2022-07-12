@@ -1,5 +1,9 @@
 <?php
-
+/* *
+    function to handle errors
+    *@param e is the error message that comes by default
+    *@param customMessage is a string with data we would like to show to the user
+ */
 function myErrorHandler($e = null,$customMessage = null){
     if(isset($e)){
         $wp_error = new WP_Error();

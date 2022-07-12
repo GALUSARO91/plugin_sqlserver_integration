@@ -5,7 +5,14 @@ use ROOT\sshcontrollers\sshhandler as SSH;
 use Illuminate\Database\Capsule\Manager as Capsule;
 Require_once 'error-handler.php';
 
+/* 
+  Triggers connectiont to the database
+*/
+
 function start_remote_db(){
+  
+  // TODO: Create test for database connection
+  // FIXME: convert database connection to a singleton class pattern
   try{
     $capsule = new Capsule;
     $connection_array = array(
@@ -29,6 +36,9 @@ function start_remote_db(){
     }
   }
 
+  /* 
+    Triggers SSH bridge
+  */
   function start_ssh(){
     $ssh = new SSH(
                     get_option('ssh_host'),
@@ -42,8 +52,12 @@ function start_remote_db(){
     return $ssh;
 }
 
+/* 
+  Filters GMC ID
+*/
 
 function handle_product_remote_id($query, $query_vars){
+  // FIXME: This function is not working
     if ( ! empty( $query_vars['gcm_id'] ) ) {
       $query['meta_query'][] = array(
         'key' => 'gcm_id',

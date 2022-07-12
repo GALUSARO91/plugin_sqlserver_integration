@@ -2,6 +2,7 @@
 /**
  * Abstract class to create controllers
  * @Param $BaseModel of tipe Illuminate\Database\Model 
+ * stores the functions for the crud in remote db
  */
 namespace ROOT\controllers;
 use ROOT\traits\remotedbpluginerrorhandler;

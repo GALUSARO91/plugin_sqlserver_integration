@@ -1,7 +1,9 @@
 <?php
 
 /*
-    Enlace a la tabla clientes
+    Link to "Cotizacion Ventas" table
+    This has part of the data for the
+    orders being shipped.
 */
 
 namespace ROOT\models;

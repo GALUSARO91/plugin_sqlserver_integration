@@ -1,5 +1,9 @@
 <?php
 
+/* 
+    CRUD to handle tarjetadesdoc
+*/
+
 namespace ROOT\controllers;
 
 class orderstarjetadesrecordcontroller extends baserecordscontroller{
@@ -13,11 +17,9 @@ class orderstarjetadesrecordcontroller extends baserecordscontroller{
 
 
     function createRecord($id,$args = null){
-        // $remoteId = $this->calculateNumReg($id);
-        // $recordFound = $this->BaseModel::where('NUM_REG',$remoteId)->first()??"";
-        // try{
+       
             if(isset($args)){
-                // if($recordFound == ""){
+           
                     $this->BaseModel->timestamps = false;
                     $this->BaseModel->NUM_REG = $id;
                     foreach($args as $key=>$value){
@@ -25,30 +27,23 @@ class orderstarjetadesrecordcontroller extends baserecordscontroller{
                     }
                     $this->BaseModel->save();
                     return true;
-                // } 
             }
-        // } catch(\Exceptions $e){
-            // return $e;
-        // }
+   
            
     }
 
     function retrieveRecord($id){
-        // $remoteId = $this->calculateNumReg($id);
-            // try{
+ 
             if(isset($id)&& $id!=""){
                 $return = $this->BaseModel::where('NUM_REG',$id)->first();
                 return $return;
                 }
-            // } catch(\Exception $e){
-                // return $e;
-            // }
+ 
     }
 
     function updateRecord($id,$args = null)
     {
-        // $remoteId = $this->calculateNumReg($id);
-        // try{    
+       
             $recordFound = $this->BaseModel::where('NUM_REG',$id)->first()??"";
             if(isset($args)){
                 if($recordFound != "") {
@@ -60,16 +55,10 @@ class orderstarjetadesrecordcontroller extends baserecordscontroller{
                     $recordFound->save();
                 }
             }
-        // }catch(\Exception $e){
-            // return $e;
-        // }
-           
-        
     }
 
     function deleteRecord($id)
-    {  // $remoteId = $this->calculateId($id);
-        // try{
+    {  
             if (isset($id)){
                 $model_found =$this->BaseModel::where('NUM_REG',$id)->first();
                 if(isset($model_found)){
@@ -77,15 +66,19 @@ class orderstarjetadesrecordcontroller extends baserecordscontroller{
                     // return true;
                 }
             }
-      /* d */   
+     
     }
-
+/* 
+    *Creates a new string ID for the records
+    *@param id, is the one saved on wordpress db
+    *@param remote_id is the one saved on remote db
+*/
     function calculateNumReg(string $id=null,string $remote_id=null)
     {
         if($remote_id!=null){
             $latest_num = trim($this->inverseCalculateNumReg($remote_id));
         }else{
-            $latest = $this->BaseModel->latest('FECHA')->first(); //Probar este codigo
+            $latest = $this->BaseModel->latest('FECHA')->first(); 
             $latest_id = trim($latest->NUM_REG);
             $latest_num = $this->inverseCalculateNumReg($latest_id);
         }
@@ -110,6 +103,10 @@ class orderstarjetadesrecordcontroller extends baserecordscontroller{
         
 
     }
+/* 
+    *returns a integer from the calculateNumReg string
+    *@param $id is the string id from remote db 
+ */
 
     function inverseCalculateNumReg($id=null)
     {
@@ -120,6 +117,12 @@ class orderstarjetadesrecordcontroller extends baserecordscontroller{
         }
         
     }
+
+    /* *
+    *returns a string with an number of the document
+    *@param id_given is the one store on wordpress db
+    *@param id_in_remote_db is the one store on remote db
+     */
 
     function set_num_doc(string $id_given =null, string $id_in_remote_db =null){
         $new_id = null;

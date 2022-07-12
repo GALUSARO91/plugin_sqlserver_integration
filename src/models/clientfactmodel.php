@@ -1,7 +1,7 @@
 <?php
 
 /*
-    Enlace a la tabla clientes
+    Link to "Facturacion Tarj Desc Doc" table
 */
 
 namespace ROOT\models;

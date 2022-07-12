@@ -1,4 +1,9 @@
 <?php
+/* *
+* Handles crud for clients in remote db
+
+*/
+
 namespace ROOT\controllers;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
@@ -40,11 +45,7 @@ class clientsrecordcontroller extends baserecordscontroller{
                 return $return;
             }
         }catch(\Exception $e){
-        //    $this->remoteDBPluginErrorHandler($e->getCode(),$e->getMessage());
-            // $log = new Logger('app');
-            // $log->pushHandler(new StreamHandler(__DIR__.'/logs/app.log', Logger::DEBUG));
-            // $log->error($e->getCode());
-            // $error = new WP_Error($e-getCode(),$e->getMessage());
+
             return $e;
         }
 
@@ -77,6 +78,9 @@ class clientsrecordcontroller extends baserecordscontroller{
         }    
     }
     function set_random_id(string $id_given, string $id_in_remote_db){
+        /* *
+            Sets a consecutve number for the orders
+         */
         $new_id = null;
 
         if($id_given == $id_in_remote_db){

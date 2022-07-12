@@ -1,7 +1,9 @@
 <?php
 
 /*
-    Enlace a la tabla clientes
+    Link to "Cotizacion Tarjeta de Kardex"
+    This table has the details of the orders
+    that are shipped
 */
 
 namespace ROOT\models;

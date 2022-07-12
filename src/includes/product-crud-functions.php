@@ -1,5 +1,7 @@
 <?php
-
+/* *
+  *this file contains the logic to handle the products crud on remote db
+*/
 if ( ! defined( 'ABSPATH' ) ) exit;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;

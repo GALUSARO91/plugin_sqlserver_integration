@@ -1,5 +1,9 @@
 <?php
 
+/* *
+    *this file contains all the logic to handle the data of order's crud
+*/
+
 if ( ! defined( 'ABSPATH' ) ) exit;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
@@ -181,12 +185,23 @@ function delete_order($order =null){
     } 
 }
  
+/* *
+    function to create a new record on remote db
+    *@param args contains the data to be passed to the remote db
+    *@param controller is the object makes the action
+*/
 function create_remote_order_items($args,$controller){
         foreach ($args as $arg){
             $controller->createRecord($arg);
         }
         
 }
+
+/* *
+    *function that filters the gcm ids
+    *@param query is the info coming from the remote db
+    *@param filter is the value we are looking for
+*/
 
 function find_product_from_remote_info($query,$filter){
     $return;

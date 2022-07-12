@@ -1,20 +1,44 @@
 <?php
 
+/* *
+    *functions to display transactions data
+*/
 
+/* *
+    *function that adds a new endpoint to wordpress.
+    *This is bound to the init hook
+*/
 
 function add_transactions_endpoint(){
+
     add_rewrite_endpoint( 'transaction-history', EP_ROOT | EP_PAGES );
 }
+
+/* *
+    *function to add a new queryvar to wordpress
+    *This is bound to a the query_vars filter
+    *@param vars comes from the query_vars filter
+*/
 
 function transactions_query_vars($vars){
     $vars[] = 'transaction-history';
     return $vars;
 }
+
+/* *
+    *function to add a new a link woocommerce my account page
+    *This is bound to a the woocommerce_account_menu_items filter
+    *@param items comes from the woocommerce filter
+*/
+
 function add_transactions_endpoint_link_my_account($items){
     $items['transaction-history'] = 'Historial de transacciones';
     return $items;
 }
  
+/* *
+    *function that echoes first part of the transactions view
+*/
 
 function get_transaction_history_content(){
 
@@ -23,6 +47,10 @@ function get_transaction_history_content(){
     <input type="button" id="setRecordsPerPage" value="Cambiar"></input></div><div id="transaction-history-content"></div><ul class="transactions-pagebar"></ul></section>';
 
 }
+
+/* *
+    function that set all the logic to show transaction records
+ */
 
 function transaction_history_records($user = null){
     wp_register_script('transaction-history-script',plugins_url('/js/transaction-history.js',__FILE__ ),array('jquery'),null, true);        

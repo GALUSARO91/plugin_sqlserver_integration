@@ -1,7 +1,7 @@
 <?php
 
 /*
-    Enlace a la tabla clientes
+    Link to cartera view to retrieve transaction history
 */
 
 namespace ROOT\models;

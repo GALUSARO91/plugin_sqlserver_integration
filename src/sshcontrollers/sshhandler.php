@@ -21,8 +21,10 @@ class sshhandler{
     private $remote_port;
     private $connectionString;
     private $pid;
-
-    function __construct(string $ssh_host, string $ssh_user, string $local_port, string $remote_host, string $remote_port, string $connectionString, string $ssh_port = '22'){
+    private static $instance = null;
+// TODO(Luis): Create test for ssh singleton pattern
+// FIXME: Refactor ssh to fit singleton pattern
+    public function __construct(string $ssh_host, string $ssh_user, string $local_port, string $remote_host, string $remote_port, string $connectionString, string $ssh_port = '22'){
 
     if($ssh_port != '22'){
         $this->ssh_port = $ssh_port;
@@ -62,6 +64,13 @@ class sshhandler{
     function __destruct(){
 
         shell_exec('sudo killall ssh');
+    }
+
+    static function create(){
+        if(isset(self::$instance)){
+          // TODO(Luis Rodriguez): static create ssh function  
+        }
+
     }
 
     }

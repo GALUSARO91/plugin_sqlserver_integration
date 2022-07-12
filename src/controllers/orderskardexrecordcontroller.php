@@ -1,5 +1,7 @@
 <?php
-
+/* *
+    Handles CRUD for order details
+*/
 namespace ROOT\controllers;
 
 class orderskardexrecordcontroller extends baserecordscontroller{
@@ -13,34 +15,24 @@ class orderskardexrecordcontroller extends baserecordscontroller{
 
 
     function createRecord($id){
-        // try{
+ 
             if(isset($id)){
-                // if($recordFound == ""){
+
                     $this->BaseModel->timestamps = false;
-                    // $this->BaseModel->NUM_REG = $id;
                     foreach($id as $key=>$value){
                         $this->BaseModel->$key = $value;
                     }
                     $this->BaseModel->save();
-                    // return $remoteId;
-                // } 
-                // return true;
             }
-        // } catch (\Exception $e){
-            // return $e;
-        // }
+
     }
 
     function retrieveRecord($id){
-        // $remoteId = $this->calculateId($id);
-        // try{
+  
             if(isset($id)&& $id!=""){
                 $return = $this->BaseModel::where('NUM_REG',$id)->get();
                 return $return;
                 }
-        // } catch(\Exception $e){
-            // return $e;
-        // }
     }
 
     function updateRecord($id)
@@ -50,17 +42,16 @@ class orderskardexrecordcontroller extends baserecordscontroller{
 
     function deleteRecord($id)
     {
-        // try{    
-            // $remoteId = $this->calculateId($id);
+ 
             $this->BaseModel::where('NUM_REG',$remoteId)->delete();   
-            // return true;
-    /*     }catch(\Exception $e){
-            return $e;
-        } */
+ 
     }
 
     function calculateNumReg(string $id=null,string $remote_id=null)
     {
+        /* 
+            Calculates unique ID for remote table
+         */
         if($remote_id!=null){
             $latest_num = trim($this->inverseCalculateNumReg($remote_id));
         }else{

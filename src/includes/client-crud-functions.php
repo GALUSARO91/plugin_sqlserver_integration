@@ -1,5 +1,7 @@
 <?php
-
+/*
+  *Here is the logic that handles all the data regarding client's crud
+ */
 if ( ! defined( 'ABSPATH' ) ) exit;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
@@ -41,9 +43,6 @@ function remote_user_creator($id){
       $ssh->ssh_bridge_close();
     }
   }
-/*   if (isset($_POST['remote-db-user-primary-key'])){
-    update_user_meta($id,'remote-db-user-primary-key',$_POST['remote-db-user-primary-key']);
-  } */
   catch(\Error $e){
       myErrorHandler($e);
   }catch(\Exception $e){
@@ -149,10 +148,10 @@ function delete_user_destiny(){
         if( isset($_REQUEST['action']) && $_REQUEST['action']=="delete_ocma"){
 
             $destiny_id = sanitize_text_field($_REQUEST['did']);
-            $destiny = $wpdb->get_results("SELECT * FROM {$destiny_table} where id = '{$destiny_id}'"); //FIXME: returns and array instead of a value
+            $destiny = $wpdb->get_results("SELECT * FROM {$destiny_table} where id = '{$destiny_id}'");
             $user_id = $destiny[0]->userid;
             $remote_db_user_id = get_user_meta($user_id,'remote-db-user-primary-key',true); 
-            $unserialized_address_data = unserialize($destiny[0]->userdata); //FIXME: Data is within an array
+            $unserialized_address_data = unserialize($destiny[0]->userdata);
             $destiny_args = [
               'COD_ID' => $remote_db_user_id,
               "Direccion" =>$unserialized_address_data['billing_address_1']
@@ -164,6 +163,14 @@ function delete_user_destiny(){
             $ssh->ssh_bridge_close();
         }
 }
+
+/* *
+  *This function check that addresses on remote db are included on wordpress db
+  *@param remote_addresses is an array of strings for the addresses coming from the remote db
+  *@param local_addresses is an array of strings for the addresses that exist in wp db 
+  *@param remote_queryobject is the object bound to the remote addresses data
+  *@param update is a boolean that allows function to know if it's retreiving or updating data on remote db
+*/
 
 function crosscheck_addresess($remote_addresses,$local_addresses,$remote_queryobject,$update){
   try{   
@@ -205,7 +212,7 @@ function crosscheck_addresess($remote_addresses,$local_addresses,$remote_queryob
                 $remote_address_args=[
                   'COD_ID'=> get_user_meta($local_addresses[$i]->userid,'remote-db-user-primary-key',true),
                   'Direccion'=>  $parsed_data['billing_address_1'],
-                  // 'REM_ID' => $local_addresses[$i]->id,
+                  
                 ];
                 $remote_queryobject->updateRecord($remote_address_args['COD_ID'],$remote_address_args);
               }else{
