@@ -11,8 +11,7 @@ Require_once 'error-handler.php';
 
 function start_remote_db(){
   
-  // TODO: Create test for database connection
-  // FIXME: convert database connection to a singleton class pattern
+  // TODO: convert database connection to a singleton class pattern
   try{
     $capsule = new Capsule;
     $connection_array = array(

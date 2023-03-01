@@ -66,6 +66,11 @@ function retrieve_user_info($user =null){
       foreach($transactionRecords as $record){
           array_push($allTransactions,$record->toArray());
       }
+
+      update_user_meta($user == null ?get_current_user_id():$user->ID,'NUM_RUC',$client_info->NUM_RUC);
+      update_user_meta($user == null ?get_current_user_id():$user->ID,'PLAZO',$client_info->PLAZO);
+      update_user_meta($user == null ?get_current_user_id():$user->ID,'LIMITE',$client_info->LIMITE);
+
       update_user_meta($user == null ?get_current_user_id():$user->ID,'billing_address_1',$client_info->DIRECCION);
       update_user_meta($user == null ?get_current_user_id():$user->ID,'billing_city',$client_info->CIUDAD);
       update_user_meta($user == null ?get_current_user_id():$user->ID,'billing_phone',$client_info->TELEFONO_1);

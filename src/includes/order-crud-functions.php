@@ -48,7 +48,7 @@ function remote_order_creator($id){
             $args =[
                 "Cod_Emp"=>"01",
                 "COD_SUC"=>"01",
-                "COD_DIA"=>"ORD-1",
+                "COD_DIA"=>"ORD-WEB",
                 "TIP_DOC"=>36,
                 "COD_ID" => $client_id,
                 "FECHA"=>date_format($order_date_created,"Y-m-d")."T".date_format($order_date_created,"H:i:s"),
@@ -69,7 +69,7 @@ function remote_order_creator($id){
                 $destiny_address_source = new clientsdestinycontroller(new clientsdestinymodel());
                 $destiny_address_info = $destiny_address_source->retrieveRecord($client_id)->toArray();
                 $destiny_values = array_values(array_filter($destiny_address_info,function($destiny)use($order){
-                    $string1 = trim($destiny['Direccion']);
+                    $string1 = trim($destiny['Direccion']); //FIXME: Change it to use address ID
                     $string2 = $order->get_billing_address_1();
                         if(strcasecmp($string1,$string2)==0){
                             return true;
