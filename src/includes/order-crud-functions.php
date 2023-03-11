@@ -69,7 +69,7 @@ function remote_order_creator($id){
                 $destiny_address_source = new clientsdestinycontroller(new clientsdestinymodel());
                 $destiny_address_info = $destiny_address_source->retrieveRecord($client_id)->toArray();
                 $destiny_values = array_values(array_filter($destiny_address_info,function($destiny)use($order){
-                    $string1 = trim($destiny['Direccion']); //FIXME: Change it to use address ID
+                    $string1 = trim($destiny['Direccion']); 
                     $string2 = $order->get_billing_address_1();
                         if(strcasecmp($string1,$string2)==0){
                             return true;
@@ -84,7 +84,7 @@ function remote_order_creator($id){
                 $item_args = [
                     'NUM_REG'=> $order_num_meta!=''?$order_num_meta:$order_num,
                     'COD_SUC' => 0,
-                    'NUM_LIN' => 1,
+                    'NUM_LIN' => $destiny_values['NUM_LIN_DIR'],
                     'COD_PROD' => $COD_PROD,
                     'CANTIDAD' => $item->get_quantity()*-1,
                     'VALOR' => $valor,

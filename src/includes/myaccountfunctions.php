@@ -57,15 +57,36 @@ function transaction_history_records($user = null){
     wp_register_style('transaction-history-style',plugins_url('/css/transaction-history.css',__FILE__ ),array(),null,'all');
     $link = $_SERVER['REQUEST_URI'];
     if($link=="/mi-cuenta/transaction-history/"){
-        $columnsToPrint =array('FECHA','NUM_DOC','SALDO','PLAZO','VENCE','LIMITE'); //FIXME: This is hardcoded
+        $GLOBALS['columnsToPrint'] = array('FECHA','NUM_DOC','SALDO','PLAZO','VENCE','LIMITE'); //FIXME: This is hardcoded
         $found_id = $user==null?get_current_user_id():$user->ID;
-        $records = get_user_meta($found_id,'all_transactions',true); 
+
+        $records = get_user_meta($found_id,'all_transactions',true);
+
         if(is_array($records)){
+            $parsed_records = array_map("filter_columns_within_array",$records);
             wp_localize_script('transaction-history-script', 'allrecords', array('records' =>$records));
-        }
-        wp_localize_script('transaction-history-script', 'columnsToPrint',array('columns'=>$columnsToPrint));
+        };
+        wp_localize_script('transaction-history-script', 'columnsToPrint',array('columns'=>$GLOBALS['columnsToPrint']));
         wp_enqueue_script('transaction-history-script');
         wp_enqueue_style('transaction-history-style');        
     }
+
+}
+
+/* *
+    function to filter only necesary columns form the transaction
+    * @param array_to_filter is where each transaction live
+
+*/
+
+function filter_columns_within_array($array_to_filter){
+
+    $sought_array = $GLOBALS['columnsToPrint'];
+    $filtered_array = array_filter($array_to_filter,function($key) use ($sought_array){
+        return in_array($key,$sought_array);
+    }
+    ,ARRAY_FILTER_USE_KEY); 
+
+    return $filtered_array;
 
 }

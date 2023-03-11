@@ -35,7 +35,7 @@ class clientsdestinycontroller extends baserecordscontroller{
     {
         try{
             if(isset($args)){
-                // $records_found=$this->retrieveRecord($id);
+                
                 $this->BaseModel->upsert($args,['COD_ID','Direccion'],['COD_ID','Direccion']);
                 return true;
             }
@@ -49,7 +49,7 @@ class clientsdestinycontroller extends baserecordscontroller{
     public function deleteRecord($id,$args = null)
     {
         if(isset($args)){
-            // array_push($args,['Desactivar' => true]);
+            
             $args['Desactivar'] = true;
             $this->BaseModel->upsert($args,['COD_ID','Direccion'],['Desactivar']);
         }

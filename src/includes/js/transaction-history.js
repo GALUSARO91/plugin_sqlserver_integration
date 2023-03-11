@@ -19,7 +19,34 @@
                 tableRows += `<tr><td>${beginning+1}</td>`
                 let sigleRecord = transactions[beginning]
                 columnsToPrint.columns.forEach(function(column){
-                        tableRows += "<td>" + sigleRecord[column] + "</td>"
+                        switch(column){
+                            case 'FECHA':
+                                var customDate = new Date(sigleRecord[column])
+                                tableRows += "<td>" + customDate.toLocaleDateString() + "</td>"
+                            break
+                            case 'VENCE':
+                                var customDate = new Date(sigleRecord[column])
+                                tableRows += "<td>" + customDate.toLocaleDateString() + "</td>"
+                            break
+                            case 'SALDO':
+                                if(sigleRecord[column] >0){
+
+                                    tableRows += "<td>" + Math.floor(Number.parseFloat(sigleRecord[column]),2) + "</td>" 
+
+                                } else{
+
+                                    tableRows += "<td> 0 </td>"
+
+                                }
+                            break
+                            case 'LIMITE':
+                                tableRows += "<td>" + Number.parseInt(sigleRecord[column]) + "</td>"
+                            break
+                            default:
+                                tableRows += "<td>" + sigleRecord[column] + "</td>"
+                            break
+                        }
+                        
                     })
                 tableRows += "</tr>"
              }

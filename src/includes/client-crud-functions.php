@@ -182,31 +182,6 @@ function crosscheck_addresess($remote_addresses,$local_addresses,$remote_queryob
     global $wpdb;
     $array_size = count($remote_addresses) <=> count ($local_addresses);
     switch ($array_size) {
-        case -1:
-          $missing_address=[];
-          foreach($local_addresses as $local_address){
-            $found=[];
-            foreach($remote_addresses as $remote_address){
-                $parsed_data = unserialize($local_address->userdata);
-                if($remote_address['COD_ID'] == get_user_meta($local_address->userid,'remote-db-user-primary-key',true)&&$remote_address['Direccion'] == $parsed_data['billing_address_1']){
-                  array_push($found,(int) true);
-              } else {
-                array_push($found, (int) false);
-              }
-            }
-            if(array_sum($found)==0){
-              $unserialized_data = unserialize($local_address->userdata);
-              array_push($missing_address,array(
-                    "COD_ID" => get_user_meta($local_address->userid,'remote-db-user-primary-key',true),
-                    "Direccion" =>$unserialized_data['billing_address_1'],
-              ));
-            }
-          }
-          array_walk($missing_address,function($address,$key,$remote_queryobject){
-            $remote_queryobject->updateRecord($address['COD_ID'],$address);
-          },$remote_queryobject);
-
-        break;
         case 0:
             $i=0;
             foreach($remote_addresses as $remote_address){
@@ -222,6 +197,7 @@ function crosscheck_addresess($remote_addresses,$local_addresses,$remote_queryob
                 $remote_queryobject->updateRecord($remote_address_args['COD_ID'],$remote_address_args);
               }else{
                 $parsed_data['billing_address_1'] = $remote_address['Direccion'];
+                $parsed_data['NUM_LIN_DIR'] = $remote_address['NUM_LIN_DIR'];
                 $data_for_update=[
                   'id'=>$local_addresses[$i]->id,
                   'userid'=>$local_addresses[$i]->userid,
@@ -241,7 +217,7 @@ function crosscheck_addresess($remote_addresses,$local_addresses,$remote_queryob
           $found=[];
           foreach($local_addresses as $local_address){
               $parsed_data = unserialize($local_address->userdata);
-              if($remote_address['COD_ID'] == get_user_meta($local_address->userid,'remote-db-user-primary-key',true)&&$remote_address['Direccion'] == $parsed_data['billing_address_1']){
+              if($remote_address['COD_ID'] == get_user_meta($local_address->userid,'remote-db-user-primary-key',true)&&$remote_address['NUM_LIN_DIR'] == $parsed_data['NUM_LIN_DIR']){
                 array_push($found, (int)true);
               } else {
                 array_push($found, (int)false);
@@ -265,6 +241,7 @@ function crosscheck_addresess($remote_addresses,$local_addresses,$remote_queryob
                   "billing_state" =>"",
                   "billing_postcode"=>"",
                   "billing_country" =>get_user_meta($user,"billing_country",true),
+                  "NUM_LIN_DIR" => $remote_address['NUM_LIN_DIR']
                 ])
             ];
             array_push($missing_address,$address_data); 
@@ -276,6 +253,10 @@ function crosscheck_addresess($remote_addresses,$local_addresses,$remote_queryob
           $wpdb->replace($table,$address);
         });
       break;
+
+      default;
+      break;
+
     }
   }catch(\Error $e){
         myErrorHandler($e);
@@ -284,5 +265,7 @@ function crosscheck_addresess($remote_addresses,$local_addresses,$remote_queryob
   }  
 
 }
+
+
 
 
