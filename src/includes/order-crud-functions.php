@@ -84,7 +84,7 @@ function remote_order_creator($id){
                 $item_args = [
                     'NUM_REG'=> $order_num_meta!=''?$order_num_meta:$order_num,
                     'COD_SUC' => 0,
-                    'NUM_LIN' => $destiny_values['NUM_LIN_DIR'],
+                    'NUM_LIN' => $destiny_values[0]['NUM_LIN_DIR'],
                     'COD_PROD' => $COD_PROD,
                     'CANTIDAD' => $item->get_quantity()*-1,
                     'VALOR' => $valor,
