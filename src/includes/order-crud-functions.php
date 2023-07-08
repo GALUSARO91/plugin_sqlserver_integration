@@ -102,7 +102,7 @@ function remote_order_creator($id){
                 create_remote_order_items($prod_items,$myOrder_items_controller);
                 } else {
                     $myorder->updateRecord($order_num_meta,$args);
-                    $myOrder_items_controller->deleteRecod($order_num_meta);
+                    $myOrder_items_controller->deleteRecord($order_num_meta);
                     create_remote_order_items($prod_items,$myOrder_items_controller);
                 }
                     $ssh->ssh_bridge_close();

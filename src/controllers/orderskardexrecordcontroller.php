@@ -43,7 +43,7 @@ class orderskardexrecordcontroller extends baserecordscontroller{
     function deleteRecord($id)
     {
  
-            $this->BaseModel::where('NUM_REG',$remoteId)->delete();   
+            $this->BaseModel::where('NUM_REG',$id)->delete();   
  
     }
 

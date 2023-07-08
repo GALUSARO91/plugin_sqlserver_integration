@@ -128,9 +128,10 @@ class orderstarjetadesrecordcontroller extends baserecordscontroller{
         $new_id = null;
 
         if($id_given == $id_in_remote_db){
-            $new_id = $this->BaseModel->max('NUM_DOC')+1;
-            $new_id_in_remote_db = $this->BaseModel::where('NUM_DOC',$new_id)->first();
-            return $this->set_num_doc($new_id,!is_null($new_id_in_remote_db )?$new_id_in_remote_db->COD_ID:''); 
+            $recordFound = $this->BaseModel->where('COD_DIA','ORD-WEB')->Max('NUM_DOC');
+            $new_id = !empty($recordFound->NUM_DOC)? $recordFound->NUM_DOC + 1 : 1;
+            $new_id_in_remote_db = $this->BaseModel->where('COD_DIA','ORD-WEB')->where('NUM_DOC',$new_id)->first();
+            return $this->set_num_doc($new_id,!empty($new_id_in_remote_db->NUM_DOC)?$new_id_in_remote_db->NUM_DOC:''); 
         } else {
             
             settype($id_given,'string');
