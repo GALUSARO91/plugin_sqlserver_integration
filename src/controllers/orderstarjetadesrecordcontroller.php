@@ -121,25 +121,25 @@ class orderstarjetadesrecordcontroller extends baserecordscontroller{
     /* *
     *returns a string with an number of the document
     *@param id_given is the one store on wordpress db
-    *@param id_in_remote_db is the one store on remote db
      */
 
-    function set_num_doc(string $id_given =null, string $id_in_remote_db =null){
+    function set_num_doc(string $id_given =null){
         $new_id = null;
-
-        if($id_given == $id_in_remote_db){
-            $recordFound = $this->BaseModel->where('COD_DIA','ORD-WEB')->Max('NUM_DOC');
-            $new_id = !empty($recordFound->NUM_DOC)? $recordFound->NUM_DOC + 1 : 1;
-            $new_id_in_remote_db = $this->BaseModel->where('COD_DIA','ORD-WEB')->where('NUM_DOC',$new_id)->first();
-            return $this->set_num_doc($new_id,!empty($new_id_in_remote_db->NUM_DOC)?$new_id_in_remote_db->NUM_DOC:''); 
-        } else {
+            $preRecordFound = isset($id_given) ? $this->BaseModel->where('COD_DIA','ORD-WEB')->where('NUM_DOC',$id_given)->get():$this->BaseModel->where('COD_DIA','ORD-WEB')->get();
+            $recordFound = $preRecordFound->max('NUM_DOC');
+            $calculatedId = !empty($recordFound)? $recordFound + 1 : 1;
+            $recordFoundInRemoteDB = $this->BaseModel->where('COD_DIA','ORD-WEB')->where('NUM_DOC',$calculatedId)->first(); 
+            if(!empty($recordFoundInRemoteDB->NUM_DOC)){  
+                $new_id_in_remote_db = !empty($recordFoundInRemoteDB->NUM_DOC)?$recordFoundInRemoteDB->NUM_DOC+1:$calculatedId;
+                return $this->set_num_doc($new_id_in_remote_db); 
+            } else {
             
-            settype($id_given,'string');
-            for($i = 0; $i < 7-strlen($id_given);$i++){
-                $new_id .= '0';
-            }
-            $new_id.=$id_given;
-            return $new_id;
+                settype($calculatedId,'string');
+                for($i = 0; $i < 7-strlen($calculatedId);$i++){
+                    $new_id .= '0';
+                }
+                $new_id.=$calculatedId;
+                return trim($new_id);
         }
     }
 }
